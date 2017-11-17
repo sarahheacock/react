@@ -1,14 +1,14 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dome'
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom'
 
-import './index.css';
+//import './index.css';
 import App from './components/App';
 
-render(
+ReactDOM.hydrate(
   <Router>
     <App
-      pokemon={window.__PRELOADED_STATE__}
+      data={window.__PRELOADED_STATE__}
     />
   </Router>,
   document.getElementById('root')

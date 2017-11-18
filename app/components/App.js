@@ -4,10 +4,13 @@ import {
   Route,
   Switch
 } from 'react-router-dom';
+// import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import About from './About';
 import Home from './Home';
-import './App.css';
+if (process.env.BROWSER) {
+  require("./App.css");
+}
 
 const App = (props) => {
   return (
@@ -23,3 +26,4 @@ const App = (props) => {
 }
 
 export default App;
+// export default withStyles(s)(App);

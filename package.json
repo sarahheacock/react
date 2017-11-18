@@ -57,14 +57,16 @@
     "babel-plugin-transform-runtime": "^6.23.0"
   },
   "scripts": {
-    "build": "NODE_ENV=production babel ./app -d build",
-    "build:watch": "NODE_ENV=development babel ./app -d build --watch",
+    "build": "BABEL_ENV=production babel ./app -d build",
     "build:client": "NODE_ENV=production webpack --config ./config/webpack.config.prod.js/",
-    "build:watch:dev": "NODE_ENV=development webpack --config ./config/webpack.config.dev.js/ --watch",
-    "build:dev": "NODE_ENV=development webpack --config ./config/webpack.config.dev.js/",
     "build:prod": "npm run build && npm run build:client",
+
+    "build:watch": "BABEL_ENV=development babel ./app -d build --watch",
+    "build:dev": "NODE_ENV=development webpack --config ./config/webpack.config.dev.js/",
+    "build:watch:dev": "NODE_ENV=development webpack --config ./config/webpack.config.dev.js/ --watch",
+
     "start": "npm run build:prod && node ./build/server/index.js",
-    "start:dev": "parallelshell 'npm run build:watch' 'npm run build:watch:dev' 'nodemon ./build/server/index.js'",
+    "start:dev": "parallelshell 'npm run build:watch' 'npm run build:watch:dev' 'nodemon ./app/server/index.js'",
     "test": "jest --watch --coverage"
   },
   "jest": {

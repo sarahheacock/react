@@ -1,20 +1,12 @@
-import path from 'path';
-import express from 'express';
-// import webpack from 'webpack';
-// import webpackMiddleware from 'webpack-dev-middleware';
-// import webpackHotMiddleware from 'webpack-hot-middleware';
-// import config from '../../config/webpack.config.dev.js';
+const express = require('express');
 
-import { createServer } from 'http'
-import router from './routes/router';
+// import { createServer } from 'http'
+const router = require('./routes/router');
 
 const app = express();
-// const compiler = webpack(config);
-const assets = express.static(path.join(__dirname, '../build'));
+// const assets = express.static(path.join(__dirname, '../build'));
 
-app.use(assets);
-// app.use(webpackMiddleware(compiler));
-// app.use(webpackHotMiddleware(compiler));
+// app.use(assets);
 app.use(router);
 
 //===========================================================
@@ -38,8 +30,7 @@ app.use((err, req, res, next) => {
 
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
-const server = createServer(app);
 
-server.listen(port, () => {
+app.listen(port, () => {
   console.log("Express server is listening on port ", port);
 });

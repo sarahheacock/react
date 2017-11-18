@@ -7,10 +7,11 @@ import {
 
 import About from './About';
 import Home from './Home';
+import './App.css';
 
 const App = (props) => {
   return (
-    <div>
+    <div className="App">
       Your React Node app is set up!
       <Switch>
         <Route path="/" exact render={() => (<Home data={props.data.name} />)} />

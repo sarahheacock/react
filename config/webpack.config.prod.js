@@ -263,6 +263,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.BROWSER': true,
     }),
+    
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({
       compress: {

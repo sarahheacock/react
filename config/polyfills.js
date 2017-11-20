@@ -9,7 +9,7 @@ if (typeof Promise === 'undefined') {
 }
 
 // fetch() polyfill for making API calls.
-require('whatwg-fetch');
+// require('whatwg-fetch');
 
 // Object.assign() is commonly used with React.
 // It will use the native implementation if it's present and isn't buggy.
@@ -17,6 +17,16 @@ Object.assign = require('object-assign');
 
 // In tests, polyfill requestAnimationFrame since jsdom doesn't provide it yet.
 // We don't polyfill it in the browser--this is user's responsibility.
-if (process.env.NODE_ENV === 'test') {
-  require('raf').polyfill(global);
-}
+// if (process.env.NODE_ENV === 'test') {
+//   require('raf').polyfill(global);
+// }
+
+// "build": "BABEL_ENV=production babel app -d build",
+// "build:client": "NODE_ENV=production webpack --config ./config/webpack.config.prod.js/",
+// "build:prod": "npm run build && npm run build:client",
+// "build:watch": "BABEL_ENV=development babel app -d build --watch",
+// "build:dev": "NODE_ENV=development webpack --config ./config/webpack.config.dev.js/",
+// "build:watch:dev": "NODE_ENV=development webpack --config ./config/webpack.config.dev.js/ --watch",
+// "start": "npm run build:prod && node ./build/server/index.js",
+// "start:dev": "parallelshell 'npm run build:watch' 'npm run build:watch:dev' 'nodemon ./build/server/index.js'",
+// "test": "jest --watch --coverage"

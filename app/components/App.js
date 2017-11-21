@@ -8,13 +8,14 @@ import {
 
 import About from './About';
 import Home from './Home';
-if (process.env.BROWSER) {
-  require("./App.css");
-}
+
+
+//import "./App.css";
+
 
 const App = (props) => {
   return (
-    <div className="App">
+    <div>
       Your React Node app is set up!
       <Switch>
         <Route path="/" exact render={() => (<Home data={props.data.name} />)} />

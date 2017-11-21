@@ -50,10 +50,10 @@ function getServedPath(appPackageJson) {
 // config after eject: we're in ./config/
 module.exports = {
   appBuild: resolveApp('build'),
-
   appSrc: resolveApp('app'),
   appIndexJs: resolveApp('app/index.js'),
-  appHtml: resolveApp('public/index.html'),
+
+  appHtml: resolveApp('app/public/index.html'),
   appPackageJson: resolveApp('package.json'),
 
   yarnLockFile: resolveApp('yarn.lock'),
@@ -63,5 +63,6 @@ module.exports = {
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),
 
+  serverSrc: resolveApp('app/server'),
   serverIndexJs: resolveApp('app/server/index.js'),
 };

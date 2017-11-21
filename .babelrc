@@ -10,7 +10,8 @@
         ]
       }
     }],
-    "react"
+    "react",
+    "react-app"
   ],
   "plugins": [
     ["transform-runtime", {

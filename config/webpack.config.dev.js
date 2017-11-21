@@ -31,7 +31,7 @@ module.exports = {
   // The first two entry points enable "hot" CSS and auto-refreshes for JS.
   entry: [
     // We ship a few polyfills by default:
-    // require.resolve('./polyfills'),
+    require.resolve('./polyfills'),
     // Include an alternative client for WebpackDevServer. A client's job is to
     // connect to WebpackDevServer by a socket and get notified about changes.
     // When you save a file, the client will either apply hot updates (in case
@@ -44,25 +44,27 @@ module.exports = {
     // require.resolve('webpack/hot/dev-server'),
     // require.resolve('react-dev-utils/webpackHotDevClient'),
     // Finally, this is your app's code:
-    paths.appIndexJs,
+    paths.serverIndexJs,
     // We include the app code last so that if there is a runtime error during
     // initialization, it doesn't blow up the WebpackDevServer client, and
     // changing JS code would still trigger a refresh.
   ],
   output: {
+    path: paths.appBuild,
+    filename: '[name].js'
     // Add /* filename */ comments to generated require()s in the output.
-    pathinfo: true,
-    // This does not produce a real file. It's just the virtual path that is
-    // served by WebpackDevServer in development. This is the JS bundle
-    // containing code from all our entry points, and the Webpack runtime.
-    filename: 'static/js/bundle.js',
-    // There are also additional JS chunk files if you use code splitting.
-    chunkFilename: 'static/js/[name].chunk.js',
-    // This is the URL that app is served from. We use "/" in development.
-    publicPath: publicPath,
-    // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: info =>
-      path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+    // pathinfo: true,
+    // // This does not produce a real file. It's just the virtual path that is
+    // // served by WebpackDevServer in development. This is the JS bundle
+    // // containing code from all our entry points, and the Webpack runtime.
+    // filename: 'static/js/bundle.js',
+    // // There are also additional JS chunk files if you use code splitting.
+    // chunkFilename: 'static/js/[name].chunk.js',
+    // // This is the URL that app is served from. We use "/" in development.
+    // publicPath: publicPath,
+    // // Point sourcemap entries to original disk location (format as URL on Windows)
+    // devtoolModuleFilenameTemplate: info =>
+    //   path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -118,6 +120,7 @@ module.exports = {
           },
         ],
         include: paths.appSrc,
+        // exclude: paths.serverSrc,
       },
       {
         // "oneOf" will traverse all following loaders until one will
@@ -171,17 +174,17 @@ module.exports = {
           // In production, they would get copied to the `build` folder.
           // This loader doesn't use a "test" so it will catch all modules
           // that fall through the other loaders.
-          {
-            // Exclude `js` files to keep "css" loader working as it injects
-            // it's runtime that would otherwise processed through "file" loader.
-            // Also exclude `html` and `json` extensions so they get processed
-            // by webpacks internal loaders.
-            exclude: [/\.js$/, /\.html$/, /\.json$/],
-            loader: require.resolve('file-loader'),
-            options: {
-              name: 'static/media/[name].[hash:8].[ext]',
-            },
-          },
+          // {
+          //   // Exclude `js` files to keep "css" loader working as it injects
+          //   // it's runtime that would otherwise processed through "file" loader.
+          //   // Also exclude `html` and `json` extensions so they get processed
+          //   // by webpacks internal loaders.
+          //   exclude: [/\.js$/, /\.html$/, /\.json$/],
+          //   loader: require.resolve('file-loader'),
+          //   options: {
+          //     name: 'static/media/[name].[hash:8].[ext]',
+          //   },
+          // },
         ],
       },
       // ** STOP ** Are you adding a new loader?
@@ -193,12 +196,12 @@ module.exports = {
     // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     // In development, this will be an empty string.
-    new InterpolateHtmlPlugin(env.raw),
-    // Generates an `index.html` file with the <script> injected.
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: paths.appHtml,
-    }),
+    // new InterpolateHtmlPlugin(env.raw),
+    // // Generates an `index.html` file with the <script> injected.
+    // new HtmlWebpackPlugin({
+    //   inject: true,
+    //   template: paths.appHtml,
+    // }),
     // Add module names to factory functions so they appear in browser profiler.
     new webpack.NamedModulesPlugin(),
     // Makes some environment variables available to the JS code, for example:

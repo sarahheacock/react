@@ -1,14 +1,39 @@
-const express = require('express');
+import express from 'express';
 
-// import { createServer } from 'http'
-const router = require('./routes/router');
+import { renderToString } from 'react-dom/server';
+import React from 'react';
+import { StaticRouter } from 'react-router-dom';
+import renderFullPage from './routes/renderFullPage';
+import App from '../components/App';
 
 const app = express();
-// const assets = express.static(path.join(__dirname, '../build'));
 
-// app.use(assets);
-app.use(router);
 
+//===============MIDDLEWARE=================================
+const display = (req, res, next) => {
+  const html = renderToString(
+    <StaticRouter context={{}} location={req.url}>
+      <App data={req.data} />
+    </StaticRouter>
+  );
+
+  res.status(200).send(renderFullPage(html, req.data));
+}
+
+//=================ROUTES====================================
+app.get("/", (req, res, next) => {
+  req.data = {
+    "name": "Home"
+  }
+  next();
+}, display);
+
+app.get("/about", (req, res, next) => {
+  req.data = {
+    "name": "About"
+  }
+  next();
+}, display);
 //===========================================================
 //==========================================================
 //catch 404 and forward to error handler
@@ -28,9 +53,11 @@ app.use((err, req, res, next) => {
   });
 });
 
+const http = require('http');
+
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
-app.listen(port, () => {
+http.createServer(app).listen(port, () => {
   console.log("Express server is listening on port ", port);
 });

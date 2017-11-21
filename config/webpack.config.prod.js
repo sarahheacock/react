@@ -1,4 +1,4 @@
-const autoprefixer = require('autoprefixer');
+// const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -54,7 +54,7 @@ module.exports = {
   // You can exclude the *.map files from the build during deployment.
   devtool: shouldUseSourceMap ? 'source-map' : false,
   // In production, we only want to load the polyfills and the app code.
-  entry: [require.resolve('./polyfills'), paths.appIndexJs],
+  entry: [require.resolve('./polyfills'), paths.serverIndexJs],
   output: {
     // The build folder.
     path: paths.appBuild,
@@ -172,43 +172,22 @@ module.exports = {
                     loader: require.resolve('style-loader'),
                     options: {
                       hmr: false,
-                    },
+                    }
                   },
                   use: [
                     {
                       loader: require.resolve('css-loader'),
                       options: {
                         importLoaders: 1,
-                        minimize: true,
-                        sourceMap: shouldUseSourceMap,
                       },
                     },
-                    {
-                      loader: require.resolve('postcss-loader'),
-                      options: {
-                        // Necessary for external CSS imports to work
-                        // https://github.com/facebookincubator/create-react-app/issues/2677
-                        ident: 'postcss',
-                        plugins: () => [
-                          require('postcss-flexbugs-fixes'),
-                          autoprefixer({
-                            browsers: [
-                              '>1%',
-                              'last 4 versions',
-                              'Firefox ESR',
-                              'not ie < 9', // React doesn't support IE8 anyway
-                            ],
-                            flexbox: 'no-2009',
-                          }),
-                        ],
-                      },
-                    },
-                  ],
+                    require.resolve('postcss-loader')
+                  ]
                 },
                 extractTextPluginOptions
               )
-            ),
-            // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
+            )
+
           },
           // "file" loader makes sure assets end up in the `build` folder.
           // When you `import` an asset, you get its filename.
@@ -263,7 +242,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.BROWSER': true,
     }),
-    
+
     // Minify the code.
     new webpack.optimize.UglifyJsPlugin({
       compress: {

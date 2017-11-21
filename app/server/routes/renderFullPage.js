@@ -24,7 +24,6 @@ const renderFullPage = (html, preloadedState) => {
         <script>
           window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '||u003c')}
         </script>
-        <script src="static/js/bundle.js"></script>
       </body>
     </html>
   `

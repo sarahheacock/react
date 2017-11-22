@@ -54,7 +54,11 @@ module.exports = {
   // You can exclude the *.map files from the build during deployment.
   devtool: shouldUseSourceMap ? 'source-map' : false,
   // In production, we only want to load the polyfills and the app code.
-  entry: [require.resolve('./polyfills'), paths.serverIndexJs],
+  entry: {
+    app: [require.resolve('./polyfills'), paths.appIndexJs],
+    server: [require.resolve('./polyfills'), paths.serverIndexJs],
+    components: [require.resolve('./polyfills'), paths.appCompIndexJs]
+  },
   output: {
     // The build folder.
     path: paths.appBuild,
@@ -66,10 +70,9 @@ module.exports = {
     // We inferred the "public path" (such as / or /my-project) from homepage.
     publicPath: publicPath,
     // Point sourcemap entries to original disk location (format as URL on Windows)
-    devtoolModuleFilenameTemplate: info =>
-      path
-        .relative(paths.appSrc, info.absoluteResourcePath)
-        .replace(/\\/g, '/'),
+    devtoolModuleFilenameTemplate: info => {
+      return `webpack:///${info.resourcePath}?${info.loaders}`
+    }
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.

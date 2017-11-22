@@ -4,7 +4,14 @@ import { renderToString } from 'react-dom/server';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import renderFullPage from './routes/renderFullPage';
+import http from 'http';
+import path from 'path';
+
+// const App = require(str);
+//import App from '../../build/static/js/app.c3f6.js';
 import App from '../components/App';
+//const str = path.join('../../build', require('../../build/asset-manifest.json')["app.js"]);
+//const App = require(path.resolve(__dirname, str));
 
 const app = express();
 
@@ -22,6 +29,7 @@ const display = (req, res, next) => {
 
 //=================ROUTES====================================
 app.get("/", (req, res, next) => {
+  console.log(App);
   req.data = {
     "name": "Home"
   }
@@ -53,7 +61,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const http = require('http');
+//const http = require('http');
 
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;

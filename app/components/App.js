@@ -8,10 +8,7 @@ import {
 
 import About from './About';
 import Home from './Home';
-
-
 //import "./App.css";
-
 
 const App = (props) => {
   return (

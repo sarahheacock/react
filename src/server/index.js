@@ -5,13 +5,14 @@ import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import renderFullPage from './routes/renderFullPage';
 import http from 'http';
-import path from 'path';
 
 // const App = require(str);
-//import App from '../../build/static/js/app.c3f6.js';
-import App from '../components/App';
-//const str = path.join('../../build', require('../../build/asset-manifest.json')["app.js"]);
-//const App = require(path.resolve(__dirname, str));
+//import App from '../../build/static/js/components.d85df15a.js';
+//import App from '../components/App';
+import * as App from "shared";
+//const App = require('shared');
+// const str = path.join('../../build', require('../../build/asset-manifest.json')["app.js"]);
+// const App = require(path.resolve(__dirname, str));
 
 const app = express();
 

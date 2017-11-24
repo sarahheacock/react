@@ -3,34 +3,32 @@ import express from 'express';
 import { renderToString } from 'react-dom/server';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
-import renderFullPage from './routes/renderFullPage';
+import renderFullPage from './renderFullPage';
 import http from 'http';
+// import path from 'path';
+// import fs from 'fs';
+// import cheerio from 'cheerio';
 
-// const App = require(str);
-//import App from '../../build/static/js/components.d85df15a.js';
-//import App from '../components/App';
+
 import * as App from "shared";
-//const App = require('shared');
-// const str = path.join('../../build', require('../../build/asset-manifest.json')["app.js"]);
-// const App = require(path.resolve(__dirname, str));
+
 
 const app = express();
-
+app.use(express.static("build"));
 
 //===============MIDDLEWARE=================================
 const display = (req, res, next) => {
   const html = renderToString(
     <StaticRouter context={{}} location={req.url}>
-      <App data={req.data} />
+      <App.default data={req.data} />
     </StaticRouter>
   );
-
   res.status(200).send(renderFullPage(html, req.data));
 }
 
 //=================ROUTES====================================
 app.get("/", (req, res, next) => {
-  console.log(App);
+  console.log(App.default);
   req.data = {
     "name": "Home"
   }

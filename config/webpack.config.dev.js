@@ -53,11 +53,13 @@ module.exports = [
     },
     output: {
       path: paths.nodeBuild,
-      filename: "index.js",
+      filename: "main.js",
+      library: "App",
+      libraryTarget: 'umd',
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate: info =>
-        path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+      // devtoolModuleFilenameTemplate: info =>
+      //   path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
     resolve: {
       modules: ['node_modules', paths.appNodeModules].concat(
@@ -121,10 +123,6 @@ module.exports = [
             }
           ],
         },
-        // {
-        //   test: paths.sharedIndexJs,
-        //   loader: 'exports-loader?App!./App.js'
-        // }
       ],
     },
     plugins: [
@@ -372,7 +370,7 @@ module.exports = [
       // Generated JS file names (with nested folders).
       // There will be one main bundle, and one file per asynchronous chunk.
       // We don't currently advertise code splitting but Webpack supports it.
-      filename: 'server/js/[name].js',
+      filename: '[name].js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)

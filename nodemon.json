@@ -1,0 +1,10 @@
+{
+  "verbose": false,
+  "delay": "1000",
+  "execMap": {
+    "js": "node --harmony"
+  },
+  "events": {
+    "restart": "node scripts/restart.js"
+  }
+}

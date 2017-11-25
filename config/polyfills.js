@@ -28,3 +28,25 @@ Object.assign = require('object-assign');
 // "start": "npm run build:prod && node ./build/server/index.js",
 // "start:dev": "parallelshell 'npm run build:watch' 'npm run build:watch:dev' 'nodemon ./build/server/index.js'",
 // "test": "jest --watch --coverage"
+
+// ["env", {
+//   "targets": {
+//     "browsers": [
+//       ">1%",
+//       "last 4 versions",
+//       "Firefox ESR",
+//       "not ie < 9",
+//     ]
+//   }
+// }],
+// "react"
+// ],
+// "plugins": [
+// [
+//   "transform-runtime", {
+//     "helpers": false,
+//     "polyfill": false,
+//     "regenerator": true,
+//     "moduleName": "babel-runtime"
+//   }
+// ]

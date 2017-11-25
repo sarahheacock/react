@@ -1,14 +1,19 @@
 const renderFullPage = (html, preloadedState) => {
   const DEV = process.env.NODE_ENV === 'development';
-  const src = "/static/js/client.js";
-  const href = "/static/css/client.css";
+  const src = (DEV) ? "/index.js" : "/static/js/client.js";
+  const href = (DEV) ?
+  '<link href="/index.css" rel="stylesheet">' :
+  '<link href="/index.css" rel="stylesheet">';
 
   return `
     <!DOCTYPE html>
     <html>
       <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="theme-color" content="#000000">
+        ${href}
         <title>Your SSR React Router Node app initialized with data!</title>
-        <link href=${href} rel="stylesheet">
       </head>
       <body>
         <div id="root">${html}</div>

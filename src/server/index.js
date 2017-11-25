@@ -4,17 +4,14 @@ import { renderToString } from 'react-dom/server';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import renderFullPage from './renderFullPage';
-import http from 'http';
-// import path from 'path';
-// import fs from 'fs';
-// import cheerio from 'cheerio';
-
+// import http from 'http';
 
 import * as App from "shared";
 
 
 const app = express();
-app.use(express.static("build"));
+//const DEV = (process.env.NODE_ENV === 'development') ? "src/client" : "build";
+app.use(express.static("build/client"));
 
 //===============MIDDLEWARE=================================
 const display = (req, res, next) => {
@@ -60,11 +57,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-//const http = require('http');
+const server = require('http').createServer(app);
 
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
-http.createServer(app).listen(port, () => {
+// const io = require('socket.io')(server);
+// io.on('connection', function(client){
+//   console.log(client);
+//   // io.emit('browserReload');
+//   // client.on('connect', function(data){
+//   //   console.log(data);
+//   // });
+//   // client.on('disconnect', function(){});
+// });
+
+server.listen(port, () => {
   console.log("Express server is listening on port ", port);
 });

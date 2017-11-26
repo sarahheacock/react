@@ -8,17 +8,11 @@ import {
 
 import About from './About';
 import Home from './Home';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 
-const socket = io('http://localhost');
+// const socket = io('http://localhost');
 
 class App extends React.Component {
-  componentDidMount(){
-    socket.on('connect', () => {
-      window.location.reload(true);
-    });
-  }
-
   render() {
     return(
       <div>

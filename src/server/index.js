@@ -8,9 +8,10 @@ import renderFullPage from './renderFullPage';
 
 import * as App from "shared";
 
-
+const reload = require('./reload.js');
 const app = express();
 //const DEV = (process.env.NODE_ENV === 'development') ? "src/client" : "build";
+let restart = false;
 app.use(express.static("build/client"));
 
 //===============MIDDLEWARE=================================
@@ -20,7 +21,18 @@ const display = (req, res, next) => {
       <App.default data={req.data} />
     </StaticRouter>
   );
-  res.status(200).send(renderFullPage(html, req.data));
+
+  console.log(restart);
+
+  if(restart){
+    restart = false;
+    res.status(200).send(`<script>window.location.reload(true)</script>`);
+  }
+  else {
+    restart = true;
+    res.status(200).send(renderFullPage(html, req.data));
+  }
+
 }
 
 //=================ROUTES====================================
@@ -57,8 +69,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-const server = require('http').createServer(app);
-
+const http = require('http');
+const server = http.createServer(app);
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
@@ -73,5 +85,48 @@ const port = process.env.PORT || 8080;
 // });
 
 server.listen(port, () => {
-  console.log("Express server is listening on port ", port);
+  // reload.toggle(true);
+  const url = 'http://localhost:8080/';
+  console.log(restart, require('./reload.js'));
+
+  if(restart){
+    http.get(url, (res) => {
+      console.log("Express server is listening on port ", port, reload.reload);
+      const { statusCode } = res;
+      const contentType = res.headers['content-type'];
+
+      let error;
+      if (statusCode !== 200) {
+        error = new Error('Request Failed.\n' +
+                          `Status Code: ${statusCode}`);
+      } else if (!/^application\/json/.test(contentType)) {
+        error = new Error('Invalid content-type.\n' +
+                          `Expected application/json but received ${contentType}`);
+      }
+      if (error) {
+        console.error(error.message);
+        // consume response data to free up memory
+        res.resume();
+        return;
+      }
+
+      res.setEncoding('utf8');
+      let rawData = '';
+      res.on('data', (chunk) => { rawData += chunk; });
+      res.on('end', () => {
+        try {
+          const parsedData = JSON.parse(rawData);
+          console.log(parsedData);
+        } catch (e) {
+          console.error(e.message);
+        }
+      });
+    }).on('error', (e) => {
+      console.error(`Got error: ${e.message}`);
+    });
+  }
+  else {
+    restart = true;
+  }
+
 });

@@ -1,9 +1,12 @@
 const renderFullPage = (html, preloadedState) => {
   const DEV = process.env.NODE_ENV === 'development';
-  const src = (DEV) ? "/index.js" : "/static/js/client.js";
-  const href = (DEV) ?
-  '<link href="/index.css" rel="stylesheet">' :
-  '<link href="/index.css" rel="stylesheet">';
+  const src = "/index.js";
+  const href = '<link href="/index.css" rel="stylesheet">';
+
+  //console.log(browser);
+  //const reload = (DEV) ? `<script>window.location.reload(false)</script>` : "";
+
+  //process.env.BROWSER = false;
 
   return `
     <!DOCTYPE html>

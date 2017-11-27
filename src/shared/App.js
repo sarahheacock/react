@@ -13,6 +13,10 @@ import Home from './Home';
 // const socket = io('http://localhost');
 
 class App extends React.Component {
+  componentDidMount(){
+    console.log("HELLO", this.props.reload);
+  }
+
   render() {
     return(
       <div>

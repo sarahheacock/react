@@ -6,10 +6,10 @@ import './index.css';
 import * as App from "shared";
 
 
-
 ReactDOM.hydrate(
   <Router>
     <App.default
+      reload={window.__RELOAD__.reload}
       data={window.__PRELOADED_STATE__}
     />
   </Router>,

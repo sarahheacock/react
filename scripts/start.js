@@ -1,7 +1,7 @@
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
-process.env.PORT = 8080;
+process.env.PORT = 1337;
 const HOST = process.env.HOST || '0.0.0.0';
 
 
@@ -56,7 +56,8 @@ measureFileSizesBeforeBuild(paths.appBuild)
 .then(({ stats, previousFileSizes, warnings }) => {
   // Remove all content but keep the directory so that
   // if you're in it, you don't end up in Trash
-  //fs.emptyDirSync(paths.appBuild);
+  // fs.unlinkSync(paths.appBuild);
+  // fs.unlinkSync(paths.nodeBuild);
   // Start the webpack build
   return build(previousFileSizes, clientConfig);
 })

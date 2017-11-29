@@ -1,7 +1,6 @@
 {
   "name": "my-app",
   "version": "0.1.0",
-  "main": "build/server",
   "repository": {
     "type": "git",
     "url": "https://github.com/sarahheacock/react"
@@ -53,8 +52,7 @@
   },
   "license": "UNLICENSED",
   "scripts": {
-    "serve": "node build/server",
-    "start": "node scripts/start.js",
+    "start": "node scripts/start.js && node build/server",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },

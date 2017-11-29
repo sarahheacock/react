@@ -8,15 +8,9 @@ import {
 
 import About from './About';
 import Home from './Home';
-// import io from 'socket.io-client';
 
-// const socket = io('http://localhost');
 
 class App extends React.Component {
-  componentDidMount(){
-    console.log("HELLO", this.props.reload);
-  }
-
   render() {
     return(
       <div>

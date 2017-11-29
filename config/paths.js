@@ -51,6 +51,7 @@ function getServedPath(appPackageJson) {
 module.exports = {
   appBuild: resolveApp('build'),
   nodeBuild: resolveApp('node_modules/shared'),
+  nodeFileBuild: resolveApp('node_modules/shared/main.js'),
 
   clientSrc: resolveApp('src/client'),
   clientIndexJs: resolveApp('src/client/index.js'),

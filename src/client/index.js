@@ -3,13 +3,16 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import './index.css';
-import * as App from "shared";
+import socket from "./socket.js";
 
+import App from "shared";
+import "shared/main.css";
+
+window.onload = socket;
 
 ReactDOM.hydrate(
   <Router>
-    <App.default
-      reload={window.__RELOAD__.reload}
+    <App
       data={window.__PRELOADED_STATE__}
     />
   </Router>,

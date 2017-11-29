@@ -1,11 +1,14 @@
 {
   "verbose": false,
-  "delay": "1000",
-  "ignore": "reload.json",
+  "delay": "100",
   "execMap": {
     "js": "node --harmony"
   },
-  "events": {
-    "restart": "node scripts/restart.js"
-  }
+  "watch": [
+    "build",
+    "node_modules/shared/main.css"
+  ],
+  "ignore": [
+    "src"
+  ]
 }

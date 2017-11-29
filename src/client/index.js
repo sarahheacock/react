@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import './index.css';
-import socket from "./socket.js";
 
 import App from "shared";
 import "shared/main.css";
 
-window.onload = socket;
+// if(process.env.DEV !== "production"){
+window.onload = require("./socket.js");
+// }
 
 ReactDOM.hydrate(
   <Router>

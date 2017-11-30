@@ -7,28 +7,42 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+let response = '';
 
+function add(deploy){
+  exec('git add --all', (err, stdout, stderr) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(stdout);
 
-exec('git add --all', (err, stdout, stderr) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  console.log(stdout);
+    if(response){
+      commit(deploy, function(){
+        console.log("DONE")
+      });
+    }
+    else {
+      rl.question('commit note:\n ', (answer) => {
+        response = answer;
+        console.log(`\n\nCommiting changes: ${response}`);
+        rl.close();
 
-  rl.question('commit note:\n ', (answer) => {
-    // TODO: Log the answer in a database
-    console.log(`Commiting changes: ${answer}`);
-    rl.close();
-
-    exec(`git commit -m "${answer}" && git push heroku master`, (err, stdout, stderr) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      console.log(stdout);
-    });
+        commit(deploy, add("heroku"))
+      });
+    }    
   });
-});
+}
 
-console.log("done");
+function commit(deploy, callback){
+  exec(`git commit -m "${response}" && git push ${deploy} master`, (err, stdout, stderr) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(stdout);
+    callback();
+  });
+}
+
+add("origin");

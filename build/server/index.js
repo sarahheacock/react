@@ -72,25 +72,27 @@ app.use(function (err, req, res, next) {
   });
 });
 
-var http = require('http');
-var server = http.createServer(app);
-var wss = new WebSocket.Server({ server: server });
+// const http = require('http');
+// const server = http.createServer(app);
+// const wss = new WebSocket.Server({ server });
+//
+//
+// wss.on('connection', function connection(ws, req) {
+//   const location = url.parse(req.url, true);
+//   // You might use location.query.access_token to authenticate or share sessions
+//   // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+//
+//   ws.on('message', function incoming(message) {
+//     console.log('received: ', message, location);
+//   });
+//
+//   ws.send('HELLO');
+// });
 
-wss.on('connection', function connection(ws, req) {
-  var location = url.parse(req.url, true);
-  // You might use location.query.access_token to authenticate or share sessions
-  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-
-  ws.on('message', function incoming(message) {
-    console.log('received: ', message, location);
-  });
-
-  ws.send('HELLO');
-});
 
 //=======START SERVER========================================
 var port = process.env.PORT || 8080;
 
-server.listen(port, function () {
+app.listen(port, function () {
   console.log("Express server is listening on port ", port);
 });

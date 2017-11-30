@@ -14,7 +14,6 @@ if (!NODE_ENV) {
   );
 }
 
-
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
 var dotenvFiles = [
   `${paths.dotenv}.${NODE_ENV}.local`,

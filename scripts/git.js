@@ -28,9 +28,11 @@ function add(deploy){
         console.log(`\n\nCommiting changes: ${response}`);
         rl.close();
 
-        commit(deploy, add("heroku"))
+        commit(deploy, function(){
+          add("heroku");
+        });
       });
-    }    
+    }
   });
 }
 

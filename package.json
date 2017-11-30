@@ -53,9 +53,7 @@
   },
   "license": "ISC",
   "scripts": {
-    "build:server": "node scripts/build.js && babel ./src/server -d build/server",
-    "build:client": "NODE_ENV=production webpack --config ./config/webpack.config.sharedprod.js/",
-    "start": "node build/server/index.js",
+    "start": "node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintConfig": {

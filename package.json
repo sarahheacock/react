@@ -54,9 +54,9 @@
   "license": "ISC",
   "scripts": {
     "build:server": "node scripts/build.js && babel ./src/server -d build/server",
-    "build:client": "NODE_ENV=production webpack --config ./config/webpack.config.sharedprod.js/",
+    "start:dev": "node scripts/start.js",
     "start": "node build/server/index.js",
-    "push:git": "npm run build:server && git add --all && git commit -m 'deploy' && git push heroku master",
+    "push:heroku": "npm run build:server && node scripts/git.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintConfig": {

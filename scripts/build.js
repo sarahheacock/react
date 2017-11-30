@@ -46,8 +46,7 @@ measureFileSizesBeforeBuild(paths.appBuild)
   .then(previousFileSizes => {
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
-    fs.emptyDirSync(paths.appBuild);
-    fs.removeSync(paths.nodeFileBuild);
+    clean();
     // Merge with the public folder
     // Start the webpack build
     return build(previousFileSizes);
@@ -147,4 +146,10 @@ function build(previousFileSizes) {
       });
     // });
   });
+}
+
+
+function clean(){
+  fs.emptyDirSync(paths.appBuild);
+  fs.removeSync(paths.nodeFileBuild);
 }

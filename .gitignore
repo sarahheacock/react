@@ -6,9 +6,9 @@
 # testing
 /coverage
 
-
-
-/src/tempCSS
+/src
+/config
+/test
 
 # misc
 .DS_Store

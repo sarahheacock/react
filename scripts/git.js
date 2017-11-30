@@ -28,6 +28,7 @@ function add(deploy){
       return;
     }
     console.log(stdout);
+    console.log("add", deploy);
 
     if(response){
       commit(deploy, function(){

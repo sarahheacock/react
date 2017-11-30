@@ -7,24 +7,24 @@ import renderFullPage from './renderFullPage';
 //
 // import App from "../../build/shared";
 
-const WebSocket = require('ws');
-const url = require('url');
+// const WebSocket = require('ws');
+// const url = require('url');
 const app = express();
 
 app.use(express.static("build/client"));
 
 //===============MIDDLEWARE=================================
 const display = (req, res, next) => {
-  // res.json(req.data);
+  res.json(req.data);
   // const body = renderToString(
   //   <StaticRouter context={{}} location={req.url}>
   //     <App data={req.data} />
   //   </StaticRouter>
   // );
   //
-  const html = renderFullPage("", req.data);
-  console.log(html);
-  res.status(200).send(html);
+  // const html = renderFullPage("", req.data);
+  // console.log(html);
+  // res.status(200).send(html);
 }
 
 //=================ROUTES====================================

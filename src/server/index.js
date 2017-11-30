@@ -1,11 +1,11 @@
 import express from 'express';
 
-import { renderToString } from 'react-dom/server';
-import React from 'react';
-import { StaticRouter } from 'react-router-dom';
+// import { renderToString } from 'react-dom/server';
+// import React from 'react';
+// import { StaticRouter } from 'react-router-dom';
 import renderFullPage from './renderFullPage';
-
-import App from "../../build/shared";
+//
+// import App from "../../build/shared";
 
 const WebSocket = require('ws');
 const url = require('url');
@@ -15,13 +15,14 @@ app.use(express.static("build/client"));
 
 //===============MIDDLEWARE=================================
 const display = (req, res, next) => {
-  const body = renderToString(
-    <StaticRouter context={{}} location={req.url}>
-      <App data={req.data} />
-    </StaticRouter>
-  );
-
-  const html = renderFullPage(body, req.data);
+  // res.json(req.data);
+  // const body = renderToString(
+  //   <StaticRouter context={{}} location={req.url}>
+  //     <App data={req.data} />
+  //   </StaticRouter>
+  // );
+  //
+  const html = renderFullPage("", req.data);
   console.log(html);
   res.status(200).send(html);
 }
@@ -35,7 +36,6 @@ app.get("/about", (req, res, next) => {
 }, display);
 
 app.get("*", (req, res, next) => {
-  console.log(App);
   req.data = {
     "name": "Home"
   }
@@ -61,27 +61,27 @@ app.use((err, req, res, next) => {
   });
 });
 
-// const http = require('http');
-// const server = http.createServer(app);
-// const wss = new WebSocket.Server({ server });
-//
-//
-// wss.on('connection', function connection(ws, req) {
-//   const location = url.parse(req.url, true);
-//   // You might use location.query.access_token to authenticate or share sessions
-//   // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-//
-//   ws.on('message', function incoming(message) {
-//     console.log('received: ', message, location);
-//   });
-//
-//   ws.send('HELLO');
-// });
+const http = require('http');
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+
+wss.on('connection', function connection(ws, req) {
+  const location = url.parse(req.url, true);
+  // You might use location.query.access_token to authenticate or share sessions
+  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+
+  ws.on('message', function incoming(message) {
+    console.log('received: ', message, location);
+  });
+
+  ws.send('HELLO');
+});
 
 
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("Express server is listening on port ", port);
 });

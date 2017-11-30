@@ -54,7 +54,7 @@
   "scripts": {
     "build:server": "NODE_ENV=production webpack --config ./config/webpack.config.prod.js/",
     "build:client": "NODE_ENV=production webpack --config ./config/webpack.config.sharedprod.js/",
-    "build": "npm run build:client && npm run build:server",
+    "build": "npm run build:server",
     "start": "npm run build && NODE_ENV=production node build/server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -16,7 +16,7 @@ const renderFullPage = (html, preloadedState) => {
         <title>Your SSR React Router Node app initialized with data!</title>
       </head>
       <body>
-        <div id="root">${html}</div>
+        <div id="root">${html || 'Hello, World!'}</div>
         <script>
           window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '||u003c')}
         </script>

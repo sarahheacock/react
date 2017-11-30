@@ -2,14 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom'
 
-// import './index.css';
-import socket from './socket.js';
 import App from "../../build/shared";
+// import './index.css';
 //import "shared/main.css";
 
-
-
-window.onload = socket;
+// import socket from './socket.js';
+// window.onload = socket;
 
 ReactDOM.hydrate(
   <Router>

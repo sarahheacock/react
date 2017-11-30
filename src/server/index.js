@@ -50,6 +50,7 @@ const display = (req, res, next) => {
   //   </StaticRouter>
   // );
   //
+  
   const html = renderFullPage("", req.data);
   console.log(html);
   res.status(200).send(html);

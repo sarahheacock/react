@@ -37,6 +37,7 @@ var display = function display(req, res, next) {
   //   </StaticRouter>
   // );
   //
+
   var html = renderFullPage("", req.data);
   console.log(html);
   res.status(200).send(html);

@@ -52,7 +52,7 @@
   },
   "license": "ISC",
   "scripts": {
-    "serve": "NODE_ENV=production node ./build/server/bundle.js",
+    "serve": "NODE_ENV=production node ./build/server/index.js",
     "start": "node scripts/start.js",
     "build:server": "babel ./src/server -d build/server && babel ./src/client -d build/client",
     "build:client": "NODE_ENV=production webpack --config ./config/webpack.config.sharedprod.js/",

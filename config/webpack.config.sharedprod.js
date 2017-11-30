@@ -54,12 +54,12 @@ module.exports = {
     output: {
       path: paths.appBuild,
       filename: "shared/index.js",
-      library: "App",
-      libraryTarget: 'umd',
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
-      // devtoolModuleFilenameTemplate: info =>
-      //   path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+      devtoolModuleFilenameTemplate: info =>
+        path
+          .relative(paths.sharedSrc, info.absoluteResourcePath)
+          .replace(/\\/g, '/'),
     },
     resolve: {
       modules: ['node_modules', paths.appNodeModules].concat(
@@ -79,7 +79,7 @@ module.exports = {
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.src, [paths.appPackageJson]),
+        new ModuleScopePlugin(paths.sharedSrc, [paths.appPackageJson]),
       ],
     },
     module: {

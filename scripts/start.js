@@ -48,7 +48,7 @@ measureFileSizesBeforeBuild(paths.appBuild)
   //process.env.URL = urls.localUrlForBrowser;
 
   fs.emptyDirSync(paths.appBuild);
-  fs.removeSync(paths.nodeFileBuild);
+  //fs.removeSync(paths.nodeFileBuild);
 
   return build(previousFileSizes);
 })

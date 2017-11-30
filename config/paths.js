@@ -50,7 +50,7 @@ function getServedPath(appPackageJson) {
 // config after eject: we're in ./config/
 module.exports = {
   appBuild: resolveApp('build'),
-  nodeBuild: resolveApp('node_modules/shared'),
+  nodeBuild: resolveApp('build/shared'),
   nodeFileBuild: resolveApp('node_modules/shared/main.js'),
 
   clientSrc: resolveApp('src/client'),

@@ -5,6 +5,7 @@
     "type": "git",
     "url": "https://github.com/sarahheacock/react"
   },
+  "homepage" : "https://rocky-taiga-68455.herokuapp.com/",
   "dependencies": {
     "autoprefixer": "^7.1.6",
     "babel-runtime": "^6.26.0",
@@ -52,9 +53,8 @@
   },
   "license": "ISC",
   "scripts": {
-    "build:server": "babel ./src/server -d build/server && babel ./src/client -d build/client",
+    "build:server": "node scripts/build.js && babel ./src/server -d build/server",
     "build:client": "NODE_ENV=production webpack --config ./config/webpack.config.sharedprod.js/",
-    "build": "node scripts/build.js",
     "start": "node build/server/index.js",
     "postinstall": "npm run build:server",
     "test": "echo \"Error: no test specified\" && exit 1"

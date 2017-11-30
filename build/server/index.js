@@ -864,12 +864,6 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports) {
-
-module.exports = require("http");
-
-/***/ }),
-/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1182,16 +1176,22 @@ function newObject() {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = require("stream");
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = require("http");
 
 /***/ }),
 /* 13 */
@@ -3937,7 +3937,7 @@ module.exports = {
  * @private
  */
 
-var http = __webpack_require__(9);
+var http = __webpack_require__(12);
 
 /**
  * Module exports.
@@ -4042,14 +4042,14 @@ var encodeUrl = __webpack_require__(26)
 var escapeHtml = __webpack_require__(27)
 var etag = __webpack_require__(67)
 var fresh = __webpack_require__(68)
-var fs = __webpack_require__(11)
+var fs = __webpack_require__(10)
 var mime = __webpack_require__(141)
 var ms = __webpack_require__(51)
 var onFinished = __webpack_require__(25)
 var parseRange = __webpack_require__(69)
 var path = __webpack_require__(7)
 var statuses = __webpack_require__(23)
-var Stream = __webpack_require__(12)
+var Stream = __webpack_require__(11)
 var util = __webpack_require__(33)
 
 /**
@@ -8730,7 +8730,7 @@ module.exports = etag
  */
 
 var crypto = __webpack_require__(18)
-var Stats = __webpack_require__(11).Stats
+var Stats = __webpack_require__(10).Stats
 
 /**
  * Module variables.
@@ -10044,7 +10044,7 @@ const EventEmitter = __webpack_require__(21);
 const crypto = __webpack_require__(18);
 const Ultron = __webpack_require__(80);
 const https = __webpack_require__(198);
-const http = __webpack_require__(9);
+const http = __webpack_require__(12);
 const url = __webpack_require__(17);
 
 const PerMessageDeflate = __webpack_require__(31);
@@ -12521,10 +12521,24 @@ app.get("/about",function(req,res,next){req.data={"name":"About"};next();},displ
 //==========================================================
 //catch 404 and forward to error handler
 app.use(function(req,res,next){var err=new Error("Not Found");err.status=404;next(err);});//Error Handler
-app.use(function(err,req,res,next){res.status(err.status||500);res.json({error:{message:err.message}});});var http=__webpack_require__(9);var server=http.createServer(app);var wss=new WebSocket.Server({server:server});wss.on('connection',function connection(ws,req){var location=url.parse(req.url,true);// You might use location.query.access_token to authenticate or share sessions
-// or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-ws.on('message',function incoming(message){console.log('received: ',message,location);});ws.send('HELLO');});//=======START SERVER========================================
-var port=Object({"NODE_ENV":"production","PUBLIC_URL":""}).PORT||8080;server.listen(port,function(){console.log("Express server is listening on port ",port);});
+app.use(function(err,req,res,next){res.status(err.status||500);res.json({error:{message:err.message}});});// const http = require('http');
+// const server = http.createServer(app);
+// const wss = new WebSocket.Server({ server });
+//
+//
+// wss.on('connection', function connection(ws, req) {
+//   const location = url.parse(req.url, true);
+//   // You might use location.query.access_token to authenticate or share sessions
+//   // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+//
+//   ws.on('message', function incoming(message) {
+//     console.log('received: ', message, location);
+//   });
+//
+//   ws.send('HELLO');
+// });
+//=======START SERVER========================================
+var port=Object({"NODE_ENV":"production","PUBLIC_URL":""}).PORT||8080;app.listen(port,function(){console.log("Express server is listening on port ",port);});
 
 /***/ }),
 /* 92 */
@@ -13654,7 +13668,7 @@ function createWritableStdioStream (fd) {
       break;
 
     case 'FILE':
-      var fs = __webpack_require__(11);
+      var fs = __webpack_require__(10);
       stream = new fs.SyncWriteStream(fd, { autoClose: false });
       stream._type = 'fs';
       break;
@@ -16284,7 +16298,7 @@ module.exports = [["8740","䏰䰲䘃䖦䕸𧉧䵷䖳𧲱䳢𧳅㮕䜶䝄䱇䱀�
 
 
 var Buffer = __webpack_require__(4).Buffer,
-    Transform = __webpack_require__(12).Transform;
+    Transform = __webpack_require__(11).Transform;
 
 
 // == Exports ==================================================================
@@ -16581,7 +16595,7 @@ module.exports = function (iconv) {
 
         // -- Readable -------------------------------------------------------------
         if (iconv.supportsStreams) {
-            var Readable = __webpack_require__(12).Readable;
+            var Readable = __webpack_require__(11).Readable;
 
             original.ReadableSetEncoding = Readable.prototype.setEncoding;
             Readable.prototype.setEncoding = function setEncoding(enc, options) {
@@ -16615,7 +16629,7 @@ module.exports = function (iconv) {
         Buffer.prototype.write = original.BufferWrite;
 
         if (iconv.supportsStreams) {
-            var Readable = __webpack_require__(12).Readable;
+            var Readable = __webpack_require__(11).Readable;
 
             Readable.prototype.setEncoding = original.ReadableSetEncoding;
             delete Readable.prototype.collect;
@@ -18046,10 +18060,10 @@ var middleware = __webpack_require__(137);
 var query = __webpack_require__(65);
 var debug = __webpack_require__(3)('express:application');
 var View = __webpack_require__(138);
-var http = __webpack_require__(9);
-var compileETag = __webpack_require__(10).compileETag;
-var compileQueryParser = __webpack_require__(10).compileQueryParser;
-var compileTrust = __webpack_require__(10).compileTrust;
+var http = __webpack_require__(12);
+var compileETag = __webpack_require__(9).compileETag;
+var compileQueryParser = __webpack_require__(9).compileQueryParser;
+var compileTrust = __webpack_require__(9).compileTrust;
 var deprecate = __webpack_require__(6)('express');
 var flatten = __webpack_require__(28);
 var merge = __webpack_require__(29);
@@ -19198,7 +19212,7 @@ exports.init = function(app){
 
 var debug = __webpack_require__(3)('express:view');
 var path = __webpack_require__(7);
-var fs = __webpack_require__(11);
+var fs = __webpack_require__(10);
 
 /**
  * Module variables.
@@ -19395,8 +19409,8 @@ webpackEmptyContext.id = 139;
  * @private
  */
 
-var ReadStream = __webpack_require__(11).ReadStream
-var Stream = __webpack_require__(12)
+var ReadStream = __webpack_require__(10).ReadStream
+var Stream = __webpack_require__(11)
 
 /**
  * Module exports.
@@ -19464,7 +19478,7 @@ function onOpenClose() {
 /***/ (function(module, exports, __webpack_require__) {
 
 var path = __webpack_require__(7);
-var fs = __webpack_require__(11);
+var fs = __webpack_require__(10);
 
 function Mime() {
   // Map of extension -> mime type
@@ -20399,7 +20413,7 @@ var accepts = __webpack_require__(147);
 var deprecate = __webpack_require__(6)('express');
 var isIP = __webpack_require__(52).isIP;
 var typeis = __webpack_require__(15);
-var http = __webpack_require__(9);
+var http = __webpack_require__(12);
 var fresh = __webpack_require__(68);
 var parseRange = __webpack_require__(69);
 var parse = __webpack_require__(16);
@@ -22157,16 +22171,16 @@ var contentDisposition = __webpack_require__(66);
 var deprecate = __webpack_require__(6)('express');
 var encodeUrl = __webpack_require__(26);
 var escapeHtml = __webpack_require__(27);
-var http = __webpack_require__(9);
-var isAbsolute = __webpack_require__(10).isAbsolute;
+var http = __webpack_require__(12);
+var isAbsolute = __webpack_require__(9).isAbsolute;
 var onFinished = __webpack_require__(25);
 var path = __webpack_require__(7);
 var statuses = __webpack_require__(23)
 var merge = __webpack_require__(29);
 var sign = __webpack_require__(154).sign;
-var normalizeType = __webpack_require__(10).normalizeType;
-var normalizeTypes = __webpack_require__(10).normalizeTypes;
-var setCharset = __webpack_require__(10).setCharset;
+var normalizeType = __webpack_require__(9).normalizeType;
+var normalizeTypes = __webpack_require__(9).normalizeTypes;
+var setCharset = __webpack_require__(9).setCharset;
 var cookie = __webpack_require__(155);
 var send = __webpack_require__(38);
 var extname = path.extname;
@@ -23945,7 +23959,7 @@ if (true) {
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var k=__webpack_require__(32),n=__webpack_require__(1),aa=__webpack_require__(39),t=__webpack_require__(71),ba=__webpack_require__(162),ca=__webpack_require__(164),da=__webpack_require__(12);
+var k=__webpack_require__(32),n=__webpack_require__(1),aa=__webpack_require__(39),t=__webpack_require__(71),ba=__webpack_require__(162),ca=__webpack_require__(164),da=__webpack_require__(11);
 function w(a){for(var b=arguments.length-1,g="Minified React error #"+a+"; visit http://facebook.github.io/react/docs/error-decoder.html?invariant\x3d"+a,c=0;c<b;c++)g+="\x26args[]\x3d"+encodeURIComponent(arguments[c+1]);b=Error(g+" for the full message or use the non-minified dev environment for full errors and additional helpful warnings.");b.name="Invariant Violation";b.framesToPop=1;throw b;}
 var x={children:!0,dangerouslySetInnerHTML:!0,defaultValue:!0,defaultChecked:!0,innerHTML:!0,suppressContentEditableWarning:!0,suppressHydrationWarning:!0,style:!0};function z(a,b){return(a&b)===b}
 var B={MUST_USE_PROPERTY:1,HAS_BOOLEAN_VALUE:4,HAS_NUMERIC_VALUE:8,HAS_POSITIVE_NUMERIC_VALUE:24,HAS_OVERLOADED_BOOLEAN_VALUE:32,HAS_STRING_BOOLEAN_VALUE:64,injectDOMPropertyConfig:function(a){var b=B,g=a.Properties||{},c=a.DOMAttributeNamespaces||{},h=a.DOMAttributeNames||{};a=a.DOMMutationMethods||{};for(var f in g){C.hasOwnProperty(f)?w("48",f):void 0;var e=f.toLowerCase(),d=g[f];e={attributeName:e,attributeNamespace:null,propertyName:f,mutationMethod:null,mustUseProperty:z(d,b.MUST_USE_PROPERTY),
@@ -27672,7 +27686,7 @@ const safeBuffer = __webpack_require__(8);
 const EventEmitter = __webpack_require__(21);
 const crypto = __webpack_require__(18);
 const Ultron = __webpack_require__(80);
-const http = __webpack_require__(9);
+const http = __webpack_require__(12);
 const url = __webpack_require__(17);
 
 const PerMessageDeflate = __webpack_require__(31);

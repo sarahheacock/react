@@ -5,7 +5,7 @@ import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import renderFullPage from './renderFullPage';
 
-import App from "shared";
+import App from "../../build/shared";
 
 // const WebSocket = require('ws');
 // const url = require('url');

@@ -62,8 +62,7 @@ module.exports = [
       // Generated JS file names (with nested folders).
       // There will be one main bundle, and one file per asynchronous chunk.
       // We don't currently advertise code splitting but Webpack supports it.
-      filename: 'client/index.[chunkhash:8].js',
-      chunkFilename: 'client/index.[chunkhash:8].chunk.js',
+      filename: 'client/index.js',
       //chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath,
@@ -101,7 +100,7 @@ module.exports = [
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.clientSrc, [paths.appPackageJson]),
+        new ModuleScopePlugin(paths.appBuild, [paths.appPackageJson]),
       ],
     },
     module: {
@@ -242,9 +241,9 @@ module.exports = [
       // Generate a manifest file which contains a mapping of all asset filenames
       // to their corresponding output file so that tools can pick it up without
       // having to parse `index.html`.
-      new ManifestPlugin({
-        fileName: 'asset-manifest.json',
-      }),
+      // new ManifestPlugin({
+      //   fileName: 'client-manifest.json'
+      // }),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
     ],
@@ -276,8 +275,7 @@ module.exports = [
       // Generated JS file names (with nested folders).
       // There will be one main bundle, and one file per asynchronous chunk.
       // We don't currently advertise code splitting but Webpack supports it.
-      filename: 'static/index.[chunkhash:8].js',
-      chunkFilename: 'static/index.[chunkhash:8].chunk.js',
+      filename: 'server/index.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
@@ -315,7 +313,7 @@ module.exports = [
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.serverSrc, [paths.appPackageJson]),
+        new ModuleScopePlugin(paths.appBuild, [paths.appPackageJson]),
       ],
     },
     module: {
@@ -388,9 +386,9 @@ module.exports = [
         },
         sourceMap: false,
       }),
-      new ManifestPlugin({
-        fileName: 'asset-manifest.json',
-      }),
+      // new ManifestPlugin({
+      //   fileName: 'server-manifest.json'
+      // }),
     ],
   }
 ];

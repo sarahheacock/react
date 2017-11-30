@@ -45,6 +45,7 @@ module.exports = {
   nodeBuild: resolveApp('node_modules/shared'),
   nodeFileBuild: resolveApp('node_modules/shared/main.js'),
 
+  src: resolveApp('src'),
   clientSrc: resolveApp('src/client'),
   clientIndexJs: resolveApp('src/client/index.js'),
   sharedSrc: resolveApp('src/shared'),

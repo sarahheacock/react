@@ -52,7 +52,7 @@
   },
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node build",
+    "start": "node build/server/index.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },

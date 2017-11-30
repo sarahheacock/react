@@ -1,6 +1,6 @@
 const renderFullPage = (html, preloadedState) => {
   // const DEV = process.env.NODE_ENV === 'development';
-  const src = "./server/index.9c99bc72.js";
+  const src = "./index.js";
   const href = '';
   // '<link href="/index.css" rel="stylesheet">';
   // <script type="text/javascript" src="/socket.js"></script>

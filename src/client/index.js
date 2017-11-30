@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 
 // import './index.css';
 
-import App from "shared";
+import App from "../../build/shared";
 //import "shared/main.css";
 
 

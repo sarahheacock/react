@@ -12,18 +12,19 @@ const paths = require('./paths');
 const getClientEnvironment = require('./env');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
-// In development, we always serve from the root. This makes config easier.
-const publicPath = '/';
+// It requires a trailing slash, or the file assets will get an incorrect path.
+const publicPath = paths.servedPath;
+// Some apps do not use client-side routing with pushState.
+// For these, "homepage" can be set to "." to enable relative asset paths.
+const shouldUseRelativeAssetPaths = publicPath === './';
+// Source maps are resource heavy and can cause out of memory issue for large source files.
+//const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-// Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
-const publicUrl = '';
+// Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
+const publicUrl = publicPath.slice(0, -1);
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
-// Source maps are resource heavy and can cause out of memory issue for large source files.
-// const shouldUseRelativeAssetPaths = publicPath === './';
-//const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
-
 
 // Assert this just to be safe.
 // Development builds of React are slow and not intended for production.
@@ -45,14 +46,14 @@ const extractTextPluginOptions = { publicPath: Array(cssFilename.split('/').leng
 // The development configuration is different and lives in a separate file.
 module.exports = {
     name: "shared, output to ./node_modules",
-    devtool: "eval-source-map",
+    devtool: false,
     // In production, we only want to load the polyfills and the app code.
     entry: {
       client: [require.resolve('./polyfills'), paths.sharedIndexJs]
     },
     output: {
-      path: paths.nodeBuild,
-      filename: "main.js",
+      path: paths.appBuild,
+      filename: "shared/index.js",
       library: "App",
       libraryTarget: 'umd',
       publicPath: publicPath,
@@ -78,7 +79,7 @@ module.exports = {
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.sharedSrc, [paths.appPackageJson]),
+        new ModuleScopePlugin(paths.src, [paths.appPackageJson]),
       ],
     },
     module: {

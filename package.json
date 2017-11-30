@@ -52,8 +52,8 @@
   },
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node build/server",
-    "build": "babel src --out-dir build",
+    "start": "node build",
+    "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
   "jest": {

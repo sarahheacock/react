@@ -65,8 +65,8 @@ module.exports = [
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate: info =>
-        path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+      // devtoolModuleFilenameTemplate: info =>
+      //   path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
     resolve: {
       // This allows you to set a fallback for where Webpack should look for modules.
@@ -96,7 +96,7 @@ module.exports = [
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.clientSrc, [paths.appPackageJson]),
+        new ModuleScopePlugin(paths.appBuild, [paths.appPackageJson]),
       ],
     },
     module: {
@@ -257,7 +257,7 @@ module.exports = [
       // Generated JS file names (with nested folders).
       // There will be one main bundle, and one file per asynchronous chunk.
       // We don't currently advertise code splitting but Webpack supports it.
-      filename: 'index.js',
+      filename: 'server/index.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
@@ -293,7 +293,7 @@ module.exports = [
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.serverSrc, [paths.appPackageJson]),
+        new ModuleScopePlugin(paths.appBuild, [paths.appPackageJson]),
       ],
     },
     module: {

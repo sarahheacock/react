@@ -54,12 +54,9 @@ module.exports = {
     output: {
       path: paths.appBuild,
       filename: "shared/index.js",
-      publicPath: publicPath,
-      // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate: info =>
-        path
-          .relative(paths.sharedSrc, info.absoluteResourcePath)
-          .replace(/\\/g, '/'),
+      library: "App",
+      libraryTarget: 'umd',
+      publicPath: publicPath
     },
     resolve: {
       modules: ['node_modules', paths.appNodeModules].concat(

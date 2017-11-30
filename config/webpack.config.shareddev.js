@@ -51,12 +51,11 @@ module.exports = {
       client: [require.resolve('./polyfills'), paths.sharedIndexJs]
     },
     output: {
-      path: paths.nodeBuild,
-      filename: "main.js",
+      path: paths.appBuild,
+      filename: "shared/index.js",
       library: "App",
       libraryTarget: 'umd',
       publicPath: publicPath,
-      // Point sourcemap entries to original disk location (format as URL on Windows)
       // devtoolModuleFilenameTemplate: info =>
       //   path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },

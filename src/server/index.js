@@ -7,8 +7,8 @@ import renderFullPage from './renderFullPage';
 
 import App from "../../build/shared";
 
-// const WebSocket = require('ws');
-// const url = require('url');
+const WebSocket = require('ws');
+const url = require('url');
 const app = express();
 
 app.use(express.static("build/client"));
@@ -27,17 +27,17 @@ const display = (req, res, next) => {
 }
 
 //=================ROUTES====================================
-app.get("/", (req, res, next) => {
-  //console.log(require("shared/main.css"));
+app.get("/about", (req, res, next) => {
   req.data = {
-    "name": "Home"
+    "name": "About"
   }
   next();
 }, display);
 
-app.get("/about", (req, res, next) => {
+app.get("*", (req, res, next) => {
+  console.log(App);
   req.data = {
-    "name": "About"
+    "name": "Home"
   }
   next();
 }, display);
@@ -63,20 +63,20 @@ app.use((err, req, res, next) => {
 
 const http = require('http');
 const server = http.createServer(app);
-// const wss = new WebSocket.Server({ server });
-//
-//
-// wss.on('connection', function connection(ws, req) {
-//   const location = url.parse(req.url, true);
-//   // You might use location.query.access_token to authenticate or share sessions
-//   // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-//
-//   ws.on('message', function incoming(message) {
-//     console.log('received: ', message, location);
-//   });
-//
-//   ws.send('HELLO');
-// });
+const wss = new WebSocket.Server({ server });
+
+
+wss.on('connection', function connection(ws, req) {
+  const location = url.parse(req.url, true);
+  // You might use location.query.access_token to authenticate or share sessions
+  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+
+  ws.on('message', function incoming(message) {
+    console.log('received: ', message, location);
+  });
+
+  ws.send('HELLO');
+});
 
 
 //=======START SERVER========================================

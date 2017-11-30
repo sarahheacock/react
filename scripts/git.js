@@ -9,6 +9,18 @@ const rl = readline.createInterface({
 
 let response = '';
 
+function commit(deploy, callback){
+  exec(`git commit -m "${response}" && git push ${deploy} master`, (err, stdout, stderr) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(stdout);
+    callback();
+  });
+}
+
+
 function add(deploy){
   exec('git add --all', (err, stdout, stderr) => {
     if (err) {
@@ -33,17 +45,6 @@ function add(deploy){
         });
       });
     }
-  });
-}
-
-function commit(deploy, callback){
-  exec(`git commit -m "${response}" && git push ${deploy} master`, (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(stdout);
-    callback();
   });
 }
 

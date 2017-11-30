@@ -6,11 +6,9 @@
 // import './index.css';
 //import "shared/main.css";
 
-// import socket from './socket.js';
+import socket from './socket.js';
 // console.log("hi");
-window.addEventListener("load", function(){
-  console.log("hello");
-});
+window.addEventListener("load", socket);
 
 // ReactDOM.hydrate(
 //   <Router>

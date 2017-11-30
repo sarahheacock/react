@@ -92,7 +92,7 @@ function build(previousFileSizes, config) {
   console.log('Creating development build...');
 
   return new Promise((resolve, reject) => {
-    let shared = webpack(require('../config/webpack.config.shared'));
+    let shared = webpack(require('../config/webpack.config.shareddev'));
     shared.run((error, stat) => {
       if (error) {
         return reject(error);

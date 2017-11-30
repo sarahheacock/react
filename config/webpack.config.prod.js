@@ -3,7 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 // const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-// const ManifestPlugin = require('webpack-manifest-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 // const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 // const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const eslintFormatter = require('react-dev-utils/eslintFormatter');
@@ -12,44 +12,46 @@ const paths = require('./paths');
 const getClientEnvironment = require('./env');
 
 // Webpack uses `publicPath` to determine where the app is being served from.
-// In development, we always serve from the root. This makes config easier.
-const publicPath = '/';
+// It requires a trailing slash, or the file assets will get an incorrect path.
+const publicPath = paths.servedPath;
+// Some apps do not use client-side routing with pushState.
+// For these, "homepage" can be set to "." to enable relative asset paths.
+const shouldUseRelativeAssetPaths = publicPath === './';
 // `publicUrl` is just like `publicPath`, but we will provide it to our app
 // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-// Omit trailing slash as %PUBLIC_PATH%/xyz looks better than %PUBLIC_PATH%xyz.
-const publicUrl = '';
+// Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
+const publicUrl = publicPath.slice(0, -1);
 // Get environment variables to inject into our app.
 const env = getClientEnvironment(publicUrl);
-// Source maps are resource heavy and can cause out of memory issue for large source files.
-// const shouldUseRelativeAssetPaths = publicPath === './';
-//const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
-
 
 // Assert this just to be safe.
 // Development builds of React are slow and not intended for production.
-// if (env.stringified['process.env'].NODE_ENV !== '"development"') {
-//   throw new Error('Production builds must have NODE_ENV=development.');
-// }
+if (env.stringified['process.env'].NODE_ENV !== '"production"') {
+  throw new Error('Production builds must have NODE_ENV=production.');
+}
 
 // Note: defined here because it will be used more than once.
-const cssFilename = 'client/index.css';
+const cssFilename = 'client/index.[contenthash:8].css';
 
 // ExtractTextPlugin expects the build output to be flat.
 // (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
 // However, our output is structured with css, js and media folders.
 // To have this structure working with relative paths, we have to use custom options.
-const extractTextPluginOptions = { publicPath: Array(cssFilename.split('/').length).join('../') }
+const extractTextPluginOptions = shouldUseRelativeAssetPaths
+  ? // Making sure that the publicPath goes back to to build folder.
+    { publicPath: Array(cssFilename.split('/').length).join('../') }
+  : {};
+
 
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
 module.exports = [
-  require('./webpack.config.shared.js'),
   {
     name: "client side, output to ./build",
     // We generate sourcemaps in production. This is slow but gives good results.
     // You can exclude the *.map files from the build during deployment.
-    devtool: 'eval-source-map',
+    devtool: false,
     // In production, we only want to load the polyfills and the app code.
     entry: {
       client: [require.resolve('./polyfills'), paths.clientIndexJs]
@@ -60,13 +62,16 @@ module.exports = [
       // Generated JS file names (with nested folders).
       // There will be one main bundle, and one file per asynchronous chunk.
       // We don't currently advertise code splitting but Webpack supports it.
-      filename: 'client/index.js',
+      filename: 'client/index.[chunkhash:8].js',
+      chunkFilename: 'client/index.[chunkhash:8].chunk.js',
       //chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: info =>
-        path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+      path
+        .relative(paths.clientSrc, info.absoluteResourcePath)
+        .replace(/\\/g, '/'),
     },
     resolve: {
       // This allows you to set a fallback for where Webpack should look for modules.
@@ -102,10 +107,6 @@ module.exports = [
     module: {
       strictExportPresence: true,
       rules: [
-        // TODO: Disable require.ensure as it's not a standard language feature.
-        // We are waiting for https://github.com/facebookincubator/create-react-app/issues/2176.
-        // { parser: { requireEnsure: false } },
-
         // First, run the linter.
         // It's important to do this before Babel processes the JS.
         {
@@ -135,7 +136,7 @@ module.exports = [
               loader: require.resolve('url-loader'),
               options: {
                 limit: 10000,
-                name: 'static/media/[name].[hash:8].[ext]',
+                name: 'client/[name].[hash:8].[ext]',
               },
             },
             // Process JS with Babel.
@@ -198,7 +199,7 @@ module.exports = [
               // by webpacks internal loaders.
               exclude: [/\.js$/, /\.html$/, /\.json$/],
               options: {
-                name: 'static/media/[name].[hash:8].[ext]',
+                name: 'client/[name].[hash:8].[ext]',
               },
             },
             // ** STOP ** Are you adding a new loader?
@@ -213,8 +214,26 @@ module.exports = [
       // It is absolutely essential that NODE_ENV was set to production here.
       // Otherwise React will be compiled in the very slow development mode.
       new webpack.DefinePlugin(env.stringified),
-      new webpack.DefinePlugin({
-        'process.env.LOAD': true,
+      // Minify the code.
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: false,
+          // Disabled because of an issue with Uglify breaking seemingly valid code:
+          // https://github.com/facebookincubator/create-react-app/issues/2376
+          // Pending further investigation:
+          // https://github.com/mishoo/UglifyJS2/issues/2011
+          comparisons: false,
+        },
+        mangle: {
+          safari10: true,
+        },
+        output: {
+          comments: false,
+          // Turned on because emoji and regex is not minified properly using default
+          // https://github.com/facebookincubator/create-react-app/issues/2488
+          ascii_only: true,
+        },
+        sourceMap: false,
       }),
       // Note: this won't work without ExtractTextPlugin.extract(..) in `loaders`.
       new ExtractTextPlugin({
@@ -223,9 +242,9 @@ module.exports = [
       // Generate a manifest file which contains a mapping of all asset filenames
       // to their corresponding output file so that tools can pick it up without
       // having to parse `index.html`.
-      // new ManifestPlugin({
-      //   fileName: 'asset-manifest.json',
-      // }),
+      new ManifestPlugin({
+        fileName: 'asset-manifest.json',
+      }),
       // Generate a service worker script that will precache, and keep up to date,
       // the HTML & assets that are part of the Webpack build.
     ],
@@ -244,7 +263,7 @@ module.exports = [
     name: "server, output to ./build",
     // We generate sourcemaps in production. This is slow but gives good results.
     // You can exclude the *.map files from the build during deployment.
-    devtool: 'eval-source-map',
+    devtool: false,
     // In production, we only want to load the polyfills and the app code.
     entry: {
       // app: [require.resolve('./polyfills'), paths.appIndexJs],
@@ -257,12 +276,15 @@ module.exports = [
       // Generated JS file names (with nested folders).
       // There will be one main bundle, and one file per asynchronous chunk.
       // We don't currently advertise code splitting but Webpack supports it.
-      filename: 'server/index.js',
+      filename: 'static/index.[chunkhash:8].js',
+      chunkFilename: 'static/index.[chunkhash:8].chunk.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath,
       // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: info =>
-        path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
+      path
+        .relative(paths.serverSrc, info.absoluteResourcePath)
+        .replace(/\\/g, '/'),
     },
     target: 'node',
     resolve: {
@@ -270,7 +292,7 @@ module.exports = [
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.
       // https://github.com/facebookincubator/create-react-app/issues/253
-      modules: [paths.appBuild, 'node_modules', paths.appNodeModules].concat(
+      modules: ['node_modules', paths.appNodeModules].concat(
         // It is guaranteed to exist because we tweak it in `env.js`
         process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
       ),
@@ -345,9 +367,30 @@ module.exports = [
       // It is absolutely essential that NODE_ENV was set to production here.
       // Otherwise React will be compiled in the very slow development mode.
       new webpack.DefinePlugin(env.stringified),
-      new webpack.DefinePlugin({
-        'process.env.LOAD': true,
-      })
+      // Minify the code.
+      new webpack.optimize.UglifyJsPlugin({
+        compress: {
+          warnings: false,
+          // Disabled because of an issue with Uglify breaking seemingly valid code:
+          // https://github.com/facebookincubator/create-react-app/issues/2376
+          // Pending further investigation:
+          // https://github.com/mishoo/UglifyJS2/issues/2011
+          comparisons: false,
+        },
+        mangle: {
+          safari10: true,
+        },
+        output: {
+          comments: false,
+          // Turned on because emoji and regex is not minified properly using default
+          // https://github.com/facebookincubator/create-react-app/issues/2488
+          ascii_only: true,
+        },
+        sourceMap: false,
+      }),
+      new ManifestPlugin({
+        fileName: 'asset-manifest.json',
+      }),
     ],
   }
 ];

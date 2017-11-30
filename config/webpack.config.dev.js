@@ -27,9 +27,9 @@ const env = getClientEnvironment(publicUrl);
 
 // Assert this just to be safe.
 // Development builds of React are slow and not intended for production.
-// if (env.stringified['process.env'].NODE_ENV !== '"development"') {
-//   throw new Error('Production builds must have NODE_ENV=development.');
-// }
+if (env.stringified['process.env'].NODE_ENV !== '"development"') {
+  throw new Error('Production builds must have NODE_ENV=development.');
+}
 
 // Note: defined here because it will be used more than once.
 const cssFilename = 'client/index.css';
@@ -44,7 +44,7 @@ const extractTextPluginOptions = { publicPath: Array(cssFilename.split('/').leng
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
 module.exports = [
-  require('./webpack.config.shared.js'),
+  require('./webpack.config.shareddev.js'),
   {
     name: "client side, output to ./build",
     // We generate sourcemaps in production. This is slow but gives good results.

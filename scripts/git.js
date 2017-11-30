@@ -10,7 +10,7 @@ const rl = readline.createInterface({
 let response = '';
 
 function commit(deploy, callback){
-  exec(`git commit -m "${response}" && git push ${deploy} master`, (err, stdout, stderr) => {
+  exec(deploy, (err, stdout, stderr) => {
     if (err) {
       console.error(err);
       return;
@@ -22,16 +22,16 @@ function commit(deploy, callback){
 
 
 function add(deploy){
-  exec('git add --all', (err, stdout, stderr) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(stdout);
-    console.log("add", deploy);
+  // exec('git add --all', (err, stdout, stderr) => {
+  //   if (err) {
+  //     console.error(err);
+  //     return;
+  //   }
+  //   console.log(stdout);
+  //   console.log("add", deploy);
 
     if(response){
-      commit(deploy, function(){
+      commit(`git push ${deploy} master`, function(){
         console.log("DONE")
       });
     }
@@ -41,12 +41,12 @@ function add(deploy){
         console.log(`\n\nCommiting changes: ${response}`);
         rl.close();
 
-        commit(deploy, function(){
+        commit(`git add --all && git commit -m "${response}" && git push ${deploy} master`, function(){
           add("heroku");
         });
       });
     }
-  });
+  // });
 }
 
 add("origin");

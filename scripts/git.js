@@ -61,9 +61,9 @@ function ignore(deploy){
 }
 
 function add(deploy){
-  if(response){
+  if(deploy === "heroku"){
     // ignore(deploy);
-    commit(`git add --all && git commit -m "${response}" && git push ${deploy} master`, function(){
+    commit("git push heroku `git subtree split --prefix build master`:master --force", function(){
       console.log("DONE")
     });
   }

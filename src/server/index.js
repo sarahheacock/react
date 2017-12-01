@@ -18,7 +18,6 @@ const renderFullPage = (html, preloadedState) => {
   const src = "./index.js";
   const href = '';
   // '<link href="/index.css" rel="stylesheet">';
-  // <script type="text/javascript" src="/socket.js"></script>
 
   return `
     <!DOCTYPE html>
@@ -50,7 +49,7 @@ const display = (req, res, next) => {
   //   </StaticRouter>
   // );
   //
-  
+
   const html = renderFullPage("", req.data);
   console.log(html);
   res.status(200).send(html);

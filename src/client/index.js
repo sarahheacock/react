@@ -8,7 +8,15 @@ import App from "../../build/shared";
 //import "../../build/shared/index.css";
 
 import socket from './socket.js';
-window.addEventListener("load", socket);
+
+function add(){
+  if(process.env.NODE_ENV === "development"){
+    window.addEventListener('load', socket);
+  }
+}
+
+add();
+
 
 ReactDOM.hydrate(
   <Router>

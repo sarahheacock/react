@@ -34,11 +34,11 @@ export default function () {
    */
   setInterval(function() {
     if (socket.readyState !== 1) {
-      console.log(socket.readyState, 'Unable to communicate with the WebSocket server.');
+      console.log(socket.readyState, 'Unable to communicate with the WebSocket server.', socket.exit);
       if(socket.readyState === 3){
         window.location.reload(!socket.exit);
       }
     }
-  }, 3000);
+  }, 1000);
 
 };

@@ -24,13 +24,13 @@ var app = (0, _express2.default)();
 
 app.use(_express2.default.static("build/client"));
 
+var DEV = process.env.NODE_ENV === 'development';
 //===============MIDDLEWARE=================================
 var renderFullPage = function renderFullPage(html, preloadedState) {
-  // const DEV = process.env.NODE_ENV === 'development';
   var src = "./index.js";
   var href = '<link href="/index.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
 
-  return '\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <meta charset="utf-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">\n        <meta name="theme-color" content="#000000">\n        ' + href + '\n        <title>Your SSR React Router Node app initialized with data!</title>\n      </head>\n      <body>\n        <div id="root">' + (html || 'Hello, World!') + '</div>\n        <script>\n          window.__PRELOADED_STATE__ = ' + JSON.stringify(preloadedState).replace(/</g, '||u003c') + '\n        </script>\n        <script type="text/javascript" src=' + src + '></script>\n      </body>\n    </html>\n  ';
+  return '\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <meta charset="utf-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">\n        <meta name="theme-color" content="#000000">\n        ' + href + '\n        <title>Your SSR React Router Node app initialized with data!</title>\n      </head>\n      <body>\n        <div id="root">' + (html || 'Hello, World!') + '</div>\n        <script>\n          window.__PRELOADED_STATE__ = ' + JSON.stringify(preloadedState).replace(/</g, '||u003c') + '\n        </script>\n        <script type="text/javascript" src="' + src + '"></script>\n      </body>\n    </html>\n  ';
 };
 
 var display = function display(req, res, next) {
@@ -41,7 +41,6 @@ var display = function display(req, res, next) {
   ));
 
   var html = renderFullPage(body, req.data);
-  console.log(html);
   res.status(200).send(html);
 };
 
@@ -83,48 +82,52 @@ var http = require('http');
 var server = http.createServer(app);
 
 //================WEB SOCKET================================================
-var wss = new WebSocket.Server({ server: server });
-wss.on('connection', function connection(ws, req) {
-  var location = url.parse(req.url, true);
-  // You might use location.query.access_token to authenticate or share sessions
-  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+var wss = void 0;
 
-  ws.on('message', function incoming(message) {
-    console.log('received: ', message, location);
-    if (message === "close") {
-      ws.close();
-    }
-  });
+function init() {
+  if (DEV) {
+    wss = new WebSocket.Server({ server: server });
+    wss.on('connection', function connection(ws, req) {
+      // const location = url.parse(req.url, true);
+      // You might use location.query.access_token to authenticate or share sessions
+      // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
-  ws.on('close', function (reason, description) {
-    console.log(new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.');
-  });
+      ws.on('message', function incoming(message) {
+        console.log('received: ', message);
+        if (message === "close") {
+          ws.close();
+        }
+      });
 
-  ws.send('HELLO');
-});
+      ws.on('close', function (reason, description) {
+        console.log(new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.');
+      });
+
+      ws.send('HELLO');
+    });
+  }
+}
+
+init();
 
 //=======START SERVER========================================
 var port = process.env.PORT || 8080;
 
+function exit() {
+  console.log("Exiting...");
+
+  server.close(function () {
+    process.exit(0);
+  });
+}
+
 server.listen(port, function () {
-  console.log("Express server is listening on port ", port);
+  console.log("Express server is listening on port: ", port);
   console.log('pid is ' + process.pid);
 
   // SIGINT signal sent when ctrl C
   // if localhost is in use during dev
   // 'losof -i tcp:8080' in terminal to get PID
   // then 'kill -15 [PID]' or 'kill -9 [PID]'
-  process.on('SIGINT', function () {
-    console.log("Exiting...");
-
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send("exit");
-      }
-    });
-
-    server.close(function () {
-      process.exit(0);
-    });
-  });
+  process.on('SIGINT', exit);
 });

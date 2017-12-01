@@ -109,8 +109,8 @@ function build(previousFileSizes) {
       if (error) {
         return reject(error);
       }
+      
       let compiler = webpack(config);
-
       compiler.run((err, stats) => {
         if (err) {
           return reject(err);

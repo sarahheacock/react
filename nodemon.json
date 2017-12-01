@@ -1,12 +1,14 @@
 {
   "verbose": false,
-  "delay": "500",
+  "delay": "1000",
   "execMap": {
     "js": "node --harmony"
   },
   "watch": [
-    "build/server",
-    "build/client"
+    "build/server/index.js",
+    "build/client/index.css",
+    "build/client/shared.css",
+    "build/client/index.js"
   ],
   "ignore": [
     "src"

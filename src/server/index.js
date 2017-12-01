@@ -10,11 +10,12 @@ const WebSocket = require('ws');
 const url = require('url');
 const app = express();
 
+
 app.use(express.static("build/client"));
 
+const DEV = process.env.NODE_ENV === 'development';
 //===============MIDDLEWARE=================================
 const renderFullPage = (html, preloadedState) => {
-  // const DEV = process.env.NODE_ENV === 'development';
   const src = "./index.js";
   const href = '<link href="/index.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
 
@@ -33,7 +34,7 @@ const renderFullPage = (html, preloadedState) => {
         <script>
           window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(/</g, '||u003c')}
         </script>
-        <script type="text/javascript" src=${src}></script>
+        <script type="text/javascript" src="${src}"></script>
       </body>
     </html>
   `
@@ -48,7 +49,6 @@ const display = (req, res, next) => {
   );
 
   const html = renderFullPage(body, req.data);
-  console.log(html);
   res.status(200).send(html);
 }
 
@@ -90,51 +90,52 @@ const http = require('http');
 const server = http.createServer(app);
 
 //================WEB SOCKET================================================
-const wss = new WebSocket.Server({ server });
-wss.on('connection', function connection(ws, req) {
-  const location = url.parse(req.url, true);
-  // You might use location.query.access_token to authenticate or share sessions
-  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
+let wss;
 
-  ws.on('message', function incoming(message) {
-    console.log('received: ', message, location);
-    if(message === "close"){
-      ws.close();
-    }
-  });
+function init(){
+  if(DEV){
+    wss = new WebSocket.Server({ server });
+    wss.on('connection', function connection(ws, req) {
+      // const location = url.parse(req.url, true);
+      // You might use location.query.access_token to authenticate or share sessions
+      // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
-  ws.on('close', function(reason, description){
-    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-  });
+      ws.on('message', function incoming(message) {
+        console.log('received: ', message);
+        if(message === "close"){
+          ws.close();
+        }
+      });
 
-  ws.send('HELLO');
-});
+      ws.on('close', function(reason, description){
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+      });
 
+      ws.send('HELLO');
+    });
+  }
+}
 
+init();
 
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
+function exit() {
+  console.log("Exiting...");
+
+  server.close(function () {
+    process.exit(0);
+  });
+}
 
 server.listen(port, () => {
-  console.log("Express server is listening on port ", port);
+  console.log("Express server is listening on port: ", port);
   console.log('pid is ' + process.pid);
 
   // SIGINT signal sent when ctrl C
   // if localhost is in use during dev
   // 'losof -i tcp:8080' in terminal to get PID
   // then 'kill -15 [PID]' or 'kill -9 [PID]'
-  process.on('SIGINT', function () {
-    console.log("Exiting...");
-
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send("exit");
-      }
-    });
-
-    server.close(function () {
-      process.exit(0);
-    });
-  });
+  process.on('SIGINT', exit);
 });

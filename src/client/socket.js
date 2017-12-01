@@ -35,8 +35,8 @@ export default function () {
   setInterval(function() {
     if (socket.readyState !== 1) {
       console.log(socket.readyState, 'Unable to communicate with the WebSocket server.');
-      if(socket.readyState === 3 && socket.exit === false){
-        window.location.reload(true);
+      if(socket.readyState === 3){
+        window.location.reload(!socket.exit);
       }
     }
   }, 3000);

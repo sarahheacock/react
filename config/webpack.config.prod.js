@@ -42,7 +42,16 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
     { publicPath: Array(cssFilename.split('/').length).join('../') }
   : {};
 
+const fs = require('fs');
 
+let nodeModules = {};
+fs.readdirSync('node_modules')
+  .filter(function(x) {
+    return ['.bin'].indexOf(x) === -1;
+  })
+  .forEach(function(mod) {
+    nodeModules[mod] = 'commonjs ' + mod;
+  });
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
@@ -262,6 +271,7 @@ module.exports = [
     // We generate sourcemaps in production. This is slow but gives good results.
     // You can exclude the *.map files from the build during deployment.
     devtool: false,
+    target: 'node',
     // In production, we only want to load the polyfills and the app code.
     entry: {
       // app: [require.resolve('./polyfills'), paths.appIndexJs],
@@ -278,7 +288,6 @@ module.exports = [
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: publicPath
     },
-    target: 'node',
     resolve: {
       // This allows you to set a fallback for where Webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
@@ -301,11 +310,10 @@ module.exports = [
       rules: [
         // Process JS with Babel.
         {
-          test: /\.(js|jsx|mjs)$/,
-          include: paths.serverSrc,
+          test: /\.js$/,
           loader: require.resolve('babel-loader'),
           options: {
-            compact: true,
+            
           },
         }
       ],
@@ -322,14 +330,6 @@ module.exports = [
       //   },
       //   mangle: true
       // })
-    ],
-    node: {
-      console: false,
-      global: false,
-      process: false,
-      Buffer: false,
-      __filename: true,
-      __dirname: true,
-    }
+    ]
   }
 ];

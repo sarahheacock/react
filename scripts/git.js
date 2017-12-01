@@ -10,60 +10,21 @@ const rl = readline.createInterface({
 let response = '';
 
 function commit(deploy, callback){
-  console.log("\n\nPushing to:", deploy);
+  console.log("\n\n", deploy);
   exec(deploy, (err, stdout, stderr) => {
     if (err) {
       console.error(err);
-      return;
     }
     console.log(stdout);
     callback();
   });
 }
 
-function ignore(deploy){
-  const file = ".gitignore";
-  const same = `
-  # See https://help.github.com/ignore-files/ for more about ignoring files.
-
-  # dependencies
-  /node_modules
-
-  # testing
-  /coverage
-
-  # misc
-  .DS_Store
-  .env.local
-  .env.development.local
-  .env.test.local
-  .env.production.local
-
-  npm-debug.log*
-  yarn-debug.log*
-  yarn-error.log*
-  `;
-
-  const output = (deploy === "origin") ?
-  `
-  ${same}
-  /build
-  `:
-  `
-  ${same}
-  /src
-  /config
-  /scripts
-  /test
-  `;
-
-  fs.outputFileSync(file, output);
-}
 
 function add(deploy){
-  if(deploy === "heroku"){
+  if(deploy === "origin"){
     // ignore(deploy);
-    commit("git push heroku `git subtree split --prefix build master`:master --force", function(){
+    commit(`git add --all && git commit -m "${response}" && git push ${deploy} master`, function(){
       console.log("DONE")
     });
   }
@@ -74,11 +35,11 @@ function add(deploy){
       console.log(`\n\nCommiting changes: ${response}`);
       rl.close();
 
-      commit(`git add --all && git commit -m "${response}" && git push ${deploy} master`, function(){
-        add("heroku");
+      commit(`git add build && git commit -m "${response}" && git push ${deploy} master`, function(){
+        add("origin");
       });
     });
   }
 }
 
-add("origin");
+add("heroku");

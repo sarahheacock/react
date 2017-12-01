@@ -54,7 +54,7 @@
   "license": "ISC",
   "author": "sarahheacock",
   "scripts": {
-    "build:server": "node scripts/build.js",
+    "build:server": "node scripts/build.js && babel ./src/server -d build/server",
     "start:dev": "node scripts/start.js",
     "start": "node build/server/index.js",
     "init": "node scripts/init.js",

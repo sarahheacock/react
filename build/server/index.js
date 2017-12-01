@@ -28,8 +28,7 @@ app.use(_express2.default.static("build/client"));
 var renderFullPage = function renderFullPage(html, preloadedState) {
   // const DEV = process.env.NODE_ENV === 'development';
   var src = "./index.js";
-  var href = '';
-  // '<link href="/index.css" rel="stylesheet">';
+  var href = '<link href="/index.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
 
   return '\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <meta charset="utf-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">\n        <meta name="theme-color" content="#000000">\n        ' + href + '\n        <title>Your SSR React Router Node app initialized with data!</title>\n      </head>\n      <body>\n        <div id="root">' + (html || 'Hello, World!') + '</div>\n        <script>\n          window.__PRELOADED_STATE__ = ' + JSON.stringify(preloadedState).replace(/</g, '||u003c') + '\n        </script>\n        <script type="text/javascript" src=' + src + '></script>\n      </body>\n    </html>\n  ';
 };
@@ -82,8 +81,9 @@ app.use(function (err, req, res, next) {
 
 var http = require('http');
 var server = http.createServer(app);
-var wss = new WebSocket.Server({ server: server });
 
+//================WEB SOCKET================================================
+var wss = new WebSocket.Server({ server: server });
 wss.on('connection', function connection(ws, req) {
   var location = url.parse(req.url, true);
   // You might use location.query.access_token to authenticate or share sessions
@@ -91,6 +91,10 @@ wss.on('connection', function connection(ws, req) {
 
   ws.on('message', function incoming(message) {
     console.log('received: ', message, location);
+  });
+
+  ws.on('close', function (reason, description) {
+    console.log(new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.');
   });
 
   ws.send('HELLO');
@@ -101,4 +105,41 @@ var port = process.env.PORT || 8080;
 
 server.listen(port, function () {
   console.log("Express server is listening on port ", port);
+  console.log('pid is ' + process.pid);
+
+  // SIGINT signal sent when ctrl C
+  // if localhost is in use during dev
+  // 'losof -i tcp:8080' in terminal to get PID
+  // then 'kill -15 [PID]' or 'kill -9 [PID]'
+  process.on('SIGINT', function () {
+    console.log("Exiting...");
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = wss.clients[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var client = _step.value;
+
+        client.close();
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+
+    server.close(function () {
+      process.exit(0);
+    });
+  });
 });

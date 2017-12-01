@@ -84,6 +84,13 @@ measureFileSizesBeforeBuild(paths.appBuild)
 
     process.env.URL = urls.localUrlForBrowser
     setTimeout(() => { openBrowser(process.env.URL) }, 1000);
+
+    // ['SIGINT', 'SIGTERM'].forEach(function(sig) {
+    //   process.on(sig, function() {
+    //     devServer.close();
+    //     process.exit();
+    //   });
+    // });
 });
 
 

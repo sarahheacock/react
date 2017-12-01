@@ -16,8 +16,7 @@ app.use(express.static("build/client"));
 const renderFullPage = (html, preloadedState) => {
   // const DEV = process.env.NODE_ENV === 'development';
   const src = "./index.js";
-  const href = '';
-  // '<link href="/index.css" rel="stylesheet">';
+  const href = '<link href="/index.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
 
   return `
     <!DOCTYPE html>
@@ -89,9 +88,9 @@ app.use((err, req, res, next) => {
 
 const http = require('http');
 const server = http.createServer(app);
+
+//================WEB SOCKET================================================
 const wss = new WebSocket.Server({ server });
-
-
 wss.on('connection', function connection(ws, req) {
   const location = url.parse(req.url, true);
   // You might use location.query.access_token to authenticate or share sessions
@@ -101,13 +100,35 @@ wss.on('connection', function connection(ws, req) {
     console.log('received: ', message, location);
   });
 
+  ws.on('close', function(reason, description){
+    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+  });
+
   ws.send('HELLO');
 });
+
 
 
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
+
 server.listen(port, () => {
   console.log("Express server is listening on port ", port);
+  console.log('pid is ' + process.pid);
+
+  // SIGINT signal sent when ctrl C
+  // if localhost is in use during dev
+  // 'losof -i tcp:8080' in terminal to get PID
+  // then 'kill -15 [PID]' or 'kill -9 [PID]'
+  process.on('SIGINT', function () {
+    console.log("Exiting...");
+    for(const client of wss.clients){
+      client.close();
+    }
+
+    server.close(function () {
+      process.exit(0);
+    });
+  });
 });

@@ -1,7 +1,9 @@
 const { exec } = require('child_process');
+// if git or npm is not init call init.js
+
 
 const readline = require('readline');
-const fs = require('fs-extra');
+// const fs = require('fs-extra');
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -24,7 +26,7 @@ function commit(deploy, callback){
 function add(deploy){
   if(deploy === "origin"){
     // ignore(deploy);
-    commit(`git add --all && git commit -m "${response}" && git push ${deploy} master`, function(){
+    commit(`git push ${deploy} master`, function(){
       console.log("DONE")
     });
   }
@@ -35,7 +37,7 @@ function add(deploy){
       console.log(`\n\nCommiting changes: ${response}`);
       rl.close();
 
-      commit(`git add build && git commit -m "${response}" && git push ${deploy} master`, function(){
+      commit(`git add --all && git commit -m "${response}" && git push ${deploy} master`, function(){
         add("origin");
       });
     });

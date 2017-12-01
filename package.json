@@ -52,11 +52,13 @@
     "webpack-manifest-plugin": "^1.3.2"
   },
   "license": "ISC",
+  "author": "sarahheacock",
   "scripts": {
     "build:server": "node scripts/build.js && babel ./src/server -d build/server",
     "start:dev": "node scripts/start.js",
     "start": "node build/server/index.js",
-    "push": "npm run build:server && node scripts/git.js",
+    "init": "node scripts/init.js",
+    "push": "npm run build:server && node scripts/push.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "eslintConfig": {

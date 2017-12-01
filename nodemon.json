@@ -1,6 +1,6 @@
 {
   "verbose": false,
-  "delay": "1000",
+  "delay": "500",
   "execMap": {
     "js": "node --harmony"
   },

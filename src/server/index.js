@@ -1,10 +1,10 @@
 import express from 'express';
 
-// import { renderToString } from 'react-dom/server';
-// import React from 'react';
-// import { StaticRouter } from 'react-router-dom';
-//
-// import App from "../../build/shared";
+import { renderToString } from 'react-dom/server';
+import React from 'react';
+import { StaticRouter } from 'react-router-dom';
+
+import App from "../../build/shared";
 
 const WebSocket = require('ws');
 const url = require('url');
@@ -42,15 +42,13 @@ const renderFullPage = (html, preloadedState) => {
 
 
 const display = (req, res, next) => {
-  // res.json(req.data);
-  // const body = renderToString(
-  //   <StaticRouter context={{}} location={req.url}>
-  //     <App data={req.data} />
-  //   </StaticRouter>
-  // );
-  //
+  const body = renderToString(
+    <StaticRouter context={{}} location={req.url}>
+      <App data={req.data} />
+    </StaticRouter>
+  );
 
-  const html = renderFullPage("", req.data);
+  const html = renderFullPage(body, req.data);
   console.log(html);
   res.status(200).send(html);
 }

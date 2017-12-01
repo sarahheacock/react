@@ -104,11 +104,11 @@ function build(previousFileSizes) {
   console.log('Creating an optimized production build...');
 
   return new Promise((resolve, reject) => {
-    // let shared = webpack(sharedConfig);
-    // shared.run((error, stat) => {
-    //   if (error) {
-    //     return reject(error);
-    //   }
+    let shared = webpack(sharedConfig);
+    shared.run((error, stat) => {
+      if (error) {
+        return reject(error);
+      }
       let compiler = webpack(config);
 
       compiler.run((err, stats) => {
@@ -144,12 +144,11 @@ function build(previousFileSizes) {
           warnings: messages.warnings,
         });
       });
-    // });
+    });
   });
 }
 
 
 function clean(){
   fs.emptyDirSync(paths.appBuild);
-  fs.removeSync(paths.nodeFileBuild);
 }

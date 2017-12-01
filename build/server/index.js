@@ -4,13 +4,19 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _server = require('react-dom/server');
 
-// import { renderToString } from 'react-dom/server';
-// import React from 'react';
-// import { StaticRouter } from 'react-router-dom';
-//
-// import App from "../../build/shared";
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = require('react-router-dom');
+
+var _shared = require('../../build/shared');
+
+var _shared2 = _interopRequireDefault(_shared);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var WebSocket = require('ws');
 var url = require('url');
@@ -29,15 +35,13 @@ var renderFullPage = function renderFullPage(html, preloadedState) {
 };
 
 var display = function display(req, res, next) {
-  // res.json(req.data);
-  // const body = renderToString(
-  //   <StaticRouter context={{}} location={req.url}>
-  //     <App data={req.data} />
-  //   </StaticRouter>
-  // );
-  //
+  var body = (0, _server.renderToString)(_react2.default.createElement(
+    _reactRouterDom.StaticRouter,
+    { context: {}, location: req.url },
+    _react2.default.createElement(_shared2.default, { data: req.data })
+  ));
 
-  var html = renderFullPage("", req.data);
+  var html = renderFullPage(body, req.data);
   console.log(html);
   res.status(200).send(html);
 };

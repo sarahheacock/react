@@ -21,6 +21,7 @@ export default function () {
   // Listen for messages
   socket.addEventListener('message', function (event) {
       console.log('Message from server: ', event.data);
+      //send message from server in order to prevent window from reloading
       if(event.data === "exit"){
         socket.exit = true;
         socket.send("close");

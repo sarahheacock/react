@@ -7,7 +7,6 @@ import { StaticRouter } from 'react-router-dom';
 import App from "../../build/shared";
 
 const WebSocket = require('ws');
-const url = require('url');
 const app = express();
 
 
@@ -96,6 +95,7 @@ function init(){
   if(DEV){
     wss = new WebSocket.Server({ server });
     wss.on('connection', function connection(ws, req) {
+      // const url = require('url');
       // const location = url.parse(req.url, true);
       // You might use location.query.access_token to authenticate or share sessions
       // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
@@ -121,21 +121,22 @@ init();
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
-function exit() {
-  console.log("Exiting...");
-
-  server.close(function () {
-    process.exit(0);
-  });
-}
-
 server.listen(port, () => {
   console.log("Express server is listening on port: ", port);
   console.log('pid is ' + process.pid);
 
-  // SIGINT signal sent when ctrl C
   // if localhost is in use during dev
   // 'losof -i tcp:8080' in terminal to get PID
   // then 'kill -15 [PID]' or 'kill -9 [PID]'
-  process.on('SIGINT', exit);
+  // process.on('SIGINT', function() {  // ctrl C
+  //   console.log("Exiting...");
+  //   server.close(function () {
+  //     process.exit(0);
+  //   });
+  // });
+
+  // process.on('SIGUSR2', function () { // nodemon
+  //   console.log("Nodemon Exiting...");
+  //   // process.kill(process.pid, 'SIGUSR2');
+  // });
 });

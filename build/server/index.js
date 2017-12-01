@@ -19,7 +19,6 @@ var _shared2 = _interopRequireDefault(_shared);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var WebSocket = require('ws');
-var url = require('url');
 var app = (0, _express2.default)();
 
 app.use(_express2.default.static("build/client"));
@@ -88,6 +87,7 @@ function init() {
   if (DEV) {
     wss = new WebSocket.Server({ server: server });
     wss.on('connection', function connection(ws, req) {
+      // const url = require('url');
       // const location = url.parse(req.url, true);
       // You might use location.query.access_token to authenticate or share sessions
       // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
@@ -113,21 +113,22 @@ init();
 //=======START SERVER========================================
 var port = process.env.PORT || 8080;
 
-function exit() {
-  console.log("Exiting...");
-
-  server.close(function () {
-    process.exit(0);
-  });
-}
-
 server.listen(port, function () {
   console.log("Express server is listening on port: ", port);
   console.log('pid is ' + process.pid);
 
-  // SIGINT signal sent when ctrl C
   // if localhost is in use during dev
   // 'losof -i tcp:8080' in terminal to get PID
   // then 'kill -15 [PID]' or 'kill -9 [PID]'
-  process.on('SIGINT', exit);
+  // process.on('SIGINT', function() {  // ctrl C
+  //   console.log("Exiting...");
+  //   server.close(function () {
+  //     process.exit(0);
+  //   });
+  // });
+
+  // process.on('SIGUSR2', function () { // nodemon
+  //   console.log("Nodemon Exiting...");
+  //   // process.kill(process.pid, 'SIGUSR2');
+  // });
 });

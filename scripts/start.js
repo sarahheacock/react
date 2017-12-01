@@ -76,21 +76,14 @@ measureFileSizesBeforeBuild(paths.appBuild)
     const nodemon = exec('nodemon build/server/index.js');
     // This is to outpout in the terminal the child process
     nodemon.stdout.on('data', function (data) {
-      console.log(data.toString());
-    });
+      console.log("NODEMON DATA", data.toString());
+    })
+
     nodemon.on('exit', function (code) {
       console.log('nodemon process exited with code ' + code.toString());
     });
 
-    process.env.URL = urls.localUrlForBrowser
-    setTimeout(() => { openBrowser(process.env.URL) }, 1000);
-
-    // ['SIGINT', 'SIGTERM'].forEach(function(sig) {
-    //   process.on(sig, function() {
-    //     devServer.close();
-    //     process.exit();
-    //   });
-    // });
+    setTimeout(() => { openBrowser(urls.localUrlForBrowser) }, 1000);
 });
 
 

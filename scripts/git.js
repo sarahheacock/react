@@ -58,11 +58,13 @@ function ignore(deploy){
 
 function add(deploy){
   if(response){
+    ignore(deploy);
     commit(`git add --all && git commit -m "${response}" && git push ${deploy} master`, function(){
       console.log("DONE")
     });
   }
   else {
+    ignore(deploy);
     rl.question('commit note:\n ', (answer) => {
       response = answer;
       console.log(`\n\nCommiting changes: ${response}`);

@@ -98,6 +98,9 @@ wss.on('connection', function connection(ws, req) {
 
   ws.on('message', function incoming(message) {
     console.log('received: ', message, location);
+    if(message === "close"){
+      ws.close();
+    }
   });
 
   ws.on('close', function(reason, description){
@@ -123,9 +126,12 @@ server.listen(port, () => {
   // then 'kill -15 [PID]' or 'kill -9 [PID]'
   process.on('SIGINT', function () {
     console.log("Exiting...");
-    for(const client of wss.clients){
-      client.close();
-    }
+
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send("exit");
+      }
+    });
 
     server.close(function () {
       process.exit(0);

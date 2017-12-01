@@ -10,7 +10,8 @@ export default function () {
   }
   // open connection
   // Create WebSocket connection.
-  const socket = new WebSocket(window.location.href.replace('http', 'ws'));
+  let socket = new WebSocket(window.location.href.replace('http', 'ws'));
+  socket.exit = false;
 
   // Connection opened
   socket.addEventListener('open', function (event) {
@@ -20,6 +21,10 @@ export default function () {
   // Listen for messages
   socket.addEventListener('message', function (event) {
       console.log('Message from server: ', event.data);
+      if(event.data === "exit"){
+        socket.exit = true;
+        socket.send("close");
+      }
   });
 
   /**
@@ -30,7 +35,7 @@ export default function () {
   setInterval(function() {
     if (socket.readyState !== 1) {
       console.log(socket.readyState, 'Unable to communicate with the WebSocket server.');
-      if(socket.readyState === 3){
+      if(socket.readyState === 3 && socket.exit === false){
         window.location.reload(true);
       }
     }

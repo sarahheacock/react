@@ -70,23 +70,7 @@ measureFileSizesBeforeBuild(paths.appBuild)
       console.log(chalk.green('Compiled successfully.\n'));
     }
 
-    // console.log('File sizes after gzip:\n');
-    // printFileSizesAfterBuild(stats, previousFileSizes, paths.appBuild);
-
-    // const nodemon = exec('nodemon build/server/index.js');
-    // This is to outpout in the terminal the child process
-    // nodemon.stdout.on('data', function (data) {
-    //   console.log("NODEMON DATA", data.toString());
-    // })
-    //
-    // nodemon.on('exit', function (code) {
-    //   console.log('nodemon process exited with code ' + code.toString());
-    // });
-
     run();
-    //setTimeout(() => { openBrowser(urls.localUrlForBrowser) }, 2000);
-    // openBrowser(urls.localUrlForBrowser);
-
 });
 
 

@@ -135,34 +135,42 @@ function init(){
 
 init();
 
+function send(){
+  if(DEV){
+    console.log('pid is ' + process.pid);
+    const pid = process.pid;
+
+    process.send({
+      message: "Express server is listening on port: " + port + "\n pid: " + pid,
+      done: true
+    });
+  }
+}
+
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
 server.listen(port, () => {
   //console.log();
-  console.log('pid is ' + process.pid);
-  const pid = process.pid;
+  if(DEV){
+    send();
 
-  process.send({
-    message: "Express server is listening on port: " + port + "\n pid: " + pid,
-    done: true
-  });
-});
+    // if localhost is in use during dev
+    // 'losof -i tcp:8080' in terminal to get PID
+    // then 'kill -15 [PID]' or 'kill -9 [PID]'
+    process.once('SIGINT', function() {  // ctrl C
+      console.log("SIGINT");
+      //let client know that it should not reload when it loses connection
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.on('close', function(){});
+          client.send("kill");
+        }
+      });
 
-// if localhost is in use during dev
-// 'losof -i tcp:8080' in terminal to get PID
-// then 'kill -15 [PID]' or 'kill -9 [PID]'
-process.once('SIGINT', function() {  // ctrl C
-  console.log("SIGINT");
-  //let client know that it should not reload when it loses connection
-  wss.clients.forEach(function each(client) {
-    if (client.readyState === WebSocket.OPEN) {
-      client.on('close', function(){});
-      client.send("kill");
-    }
-  });
-
-  server.close(function(){
-    process.exit(0);
-  })
+      server.close(function(){
+        process.exit(0);
+      })
+    });
+  }
 });

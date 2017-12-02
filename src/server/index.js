@@ -14,6 +14,7 @@ app.use(express.static("build/client"));
 
 const DEV = process.env.NODE_ENV === 'development';
 //===============MIDDLEWARE=================================
+//html that is returned during route changes
 const renderFullPage = (html, preloadedState) => {
   const src = "./index.js";
   const href = '<link href="/index.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
@@ -39,10 +40,16 @@ const renderFullPage = (html, preloadedState) => {
   `
 }
 
+// context object that is passed to StaticRouter
+// It can modified by routes to provide additional info
+// for server-side rendering
+// context.url lets us know the app was redirected
+const context = {};
 
+//retrieve static route using react
 const display = (req, res, next) => {
   const body = renderToString(
-    <StaticRouter context={{}} location={req.url}>
+    <StaticRouter context={context} location={req.url}>
       <App data={req.data} />
     </StaticRouter>
   );
@@ -61,7 +68,7 @@ app.get("/about", (req, res, next) => {
 
 app.get("*", (req, res, next) => {
   req.data = {
-    "name": "Home"
+    "name": "HOME"
   }
   next();
 }, display);
@@ -102,13 +109,23 @@ function init(){
 
       ws.on('message', function incoming(message) {
         console.log('received: ', message);
-        if(message === "close"){
-          ws.close();
+        let obj = {};
+        obj[message] = true;
+        process.send(obj);
+
+        if(obj.kill || obj.reload){
+          process.send(obj);
+
+          server.close(function () {
+            //ws.close();
+            process.exit(0);
+          });
         }
       });
 
       ws.on('close', function(reason, description){
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+        //usually caused by reloading the browser
+        console.log((new Date()) + ' Peer disconnected. ' + reason + " " + description);
       });
 
       ws.send('HELLO');
@@ -122,21 +139,30 @@ init();
 const port = process.env.PORT || 8080;
 
 server.listen(port, () => {
-  console.log("Express server is listening on port: ", port);
+  //console.log();
   console.log('pid is ' + process.pid);
+  const pid = process.pid;
 
-  // if localhost is in use during dev
-  // 'losof -i tcp:8080' in terminal to get PID
-  // then 'kill -15 [PID]' or 'kill -9 [PID]'
-  // process.on('SIGINT', function() {  // ctrl C
-  //   console.log("Exiting...");
-  //   server.close(function () {
-  //     process.exit(0);
-  //   });
-  // });
+  process.send({
+    message: "Express server is listening on port: " + port + "\n pid: " + pid,
+    done: true
+  });
+});
 
-  // process.on('SIGUSR2', function () { // nodemon
-  //   console.log("Nodemon Exiting...");
-  //   // process.kill(process.pid, 'SIGUSR2');
-  // });
+// if localhost is in use during dev
+// 'losof -i tcp:8080' in terminal to get PID
+// then 'kill -15 [PID]' or 'kill -9 [PID]'
+process.once('SIGINT', function() {  // ctrl C
+  console.log("SIGINT");
+  //let client know that it should not reload when it loses connection
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.on('close', function(){});
+      client.send("kill");
+    }
+  });
+
+  server.close(function(){
+    process.exit(0);
+  })
 });

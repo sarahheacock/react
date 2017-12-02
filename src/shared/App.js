@@ -14,7 +14,7 @@ class App extends React.Component {
   render() {
     return(
       <div>
-        Your Isomorphic React Node app is set up!
+        Your Isomorphic React Node app is set up!!
         <Switch>
           <Route path="/" exact render={() => (<Home data={this.props.data.name} />)} />
           <Route path="/about" render={() => (<About data={this.props.data.name} />)} />

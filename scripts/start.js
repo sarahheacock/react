@@ -16,7 +16,7 @@ require('../config/env');
 
 const fs = require('fs-extra');
 const chalk = require('chalk');
-const { exec } = require('child_process');
+const { fork } = require('child_process');
 const webpack = require('webpack');
 const paths = require('../config/paths');
 // const WebpackDevServer = require('webpack-dev-server');
@@ -42,17 +42,17 @@ const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
 // const isInteractive = process.stdout.isTTY;
 
+
 measureFileSizesBeforeBuild(paths.appBuild)
 .then(previousFileSizes => {
   clearConsole();
   //process.env.URL = urls.localUrlForBrowser;
 
   fs.emptyDirSync(paths.appBuild);
-  //fs.removeSync(paths.nodeFileBuild);
-
   return build(previousFileSizes);
 })
 .then(({ stats, previousFileSizes, warnings }) => {
+    clearConsole();
     if (warnings.length) {
       console.log(chalk.yellow('Compiled with warnings.\n'));
       console.log(warnings.join('\n\n'));
@@ -73,17 +73,20 @@ measureFileSizesBeforeBuild(paths.appBuild)
     // console.log('File sizes after gzip:\n');
     // printFileSizesAfterBuild(stats, previousFileSizes, paths.appBuild);
 
-    const nodemon = exec('nodemon build/server/index.js');
+    // const nodemon = exec('nodemon build/server/index.js');
     // This is to outpout in the terminal the child process
-    nodemon.stdout.on('data', function (data) {
-      console.log("NODEMON DATA", data.toString());
-    })
+    // nodemon.stdout.on('data', function (data) {
+    //   console.log("NODEMON DATA", data.toString());
+    // })
+    //
+    // nodemon.on('exit', function (code) {
+    //   console.log('nodemon process exited with code ' + code.toString());
+    // });
 
-    nodemon.on('exit', function (code) {
-      console.log('nodemon process exited with code ' + code.toString());
-    });
+    run();
+    //setTimeout(() => { openBrowser(urls.localUrlForBrowser) }, 2000);
+    // openBrowser(urls.localUrlForBrowser);
 
-    setTimeout(() => { openBrowser(urls.localUrlForBrowser) }, 1000);
 });
 
 
@@ -126,4 +129,54 @@ function build(previousFileSizes, config) {
       });
     });
   });
+}
+
+
+function run(){
+  // The child_process.spawn() method spawns a new process using the given command,
+  // with command line arguments in args. If omitted, args defaults to an empty array.
+  let ready = false;
+  const listen = fork('scripts/listen.js');
+
+  listen.on('message', (m) => {
+    console.log('Change in files: ', m);
+    if(ready){
+      //have to restart server and reload window
+      //if you just reload window when changing client
+      //client and server text will not match
+      server.kill();
+    }
+  });
+
+  let server;
+
+  function run(){
+    server = fork('build/server/index.js');
+
+    server.on('message', (m) => {
+      console.log('PARENT got message:', m.message);
+      if(m.done){
+        ready = true;
+        openBrowser(urls.localUrlForBrowser);
+      }
+      else if(m.closed){
+        console.log("closed");
+      }
+    });
+
+    server.on('close', function(reason, description){
+      //usually caused by reloading the browser
+      console.log(reason, description);
+
+      if(description === 'SIGTERM'){
+        run();
+      }
+      else {
+        listen.kill();
+        process.exit(0);
+      }
+    });
+  }
+
+  run();
 }

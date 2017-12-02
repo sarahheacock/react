@@ -25,6 +25,7 @@ app.use(_express2.default.static("build/client"));
 
 var DEV = process.env.NODE_ENV === 'development';
 //===============MIDDLEWARE=================================
+//html that is returned during route changes
 var renderFullPage = function renderFullPage(html, preloadedState) {
   var src = "./index.js";
   var href = '<link href="/index.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
@@ -32,10 +33,17 @@ var renderFullPage = function renderFullPage(html, preloadedState) {
   return '\n    <!DOCTYPE html>\n    <html>\n      <head>\n        <meta charset="utf-8">\n        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">\n        <meta name="theme-color" content="#000000">\n        ' + href + '\n        <title>Your SSR React Router Node app initialized with data!</title>\n      </head>\n      <body>\n        <div id="root">' + (html || 'Hello, World!') + '</div>\n        <script>\n          window.__PRELOADED_STATE__ = ' + JSON.stringify(preloadedState).replace(/</g, '||u003c') + '\n        </script>\n        <script type="text/javascript" src="' + src + '"></script>\n      </body>\n    </html>\n  ';
 };
 
+// context object that is passed to StaticRouter
+// It can modified by routes to provide additional info
+// for server-side rendering
+// context.url lets us know the app was redirected
+var context = {};
+
+//retrieve static route using react
 var display = function display(req, res, next) {
   var body = (0, _server.renderToString)(_react2.default.createElement(
     _reactRouterDom.StaticRouter,
-    { context: {}, location: req.url },
+    { context: context, location: req.url },
     _react2.default.createElement(_shared2.default, { data: req.data })
   ));
 
@@ -53,7 +61,7 @@ app.get("/about", function (req, res, next) {
 
 app.get("*", function (req, res, next) {
   req.data = {
-    "name": "Home"
+    "name": "HOME"
   };
   next();
 }, display);
@@ -94,13 +102,23 @@ function init() {
 
       ws.on('message', function incoming(message) {
         console.log('received: ', message);
-        if (message === "close") {
-          ws.close();
+        var obj = {};
+        obj[message] = true;
+        process.send(obj);
+
+        if (obj.kill || obj.reload) {
+          process.send(obj);
+
+          server.close(function () {
+            //ws.close();
+            process.exit(0);
+          });
         }
       });
 
       ws.on('close', function (reason, description) {
-        console.log(new Date() + ' Peer ' + connection.remoteAddress + ' disconnected.');
+        //usually caused by reloading the browser
+        console.log(new Date() + ' Peer disconnected. ' + reason + " " + description);
       });
 
       ws.send('HELLO');
@@ -114,21 +132,31 @@ init();
 var port = process.env.PORT || 8080;
 
 server.listen(port, function () {
-  console.log("Express server is listening on port: ", port);
+  //console.log();
   console.log('pid is ' + process.pid);
+  var pid = process.pid;
 
-  // if localhost is in use during dev
-  // 'losof -i tcp:8080' in terminal to get PID
-  // then 'kill -15 [PID]' or 'kill -9 [PID]'
-  // process.on('SIGINT', function() {  // ctrl C
-  //   console.log("Exiting...");
-  //   server.close(function () {
-  //     process.exit(0);
-  //   });
-  // });
+  process.send({
+    message: "Express server is listening on port: " + port + "\n pid: " + pid,
+    done: true
+  });
+});
 
-  // process.on('SIGUSR2', function () { // nodemon
-  //   console.log("Nodemon Exiting...");
-  //   // process.kill(process.pid, 'SIGUSR2');
-  // });
+// if localhost is in use during dev
+// 'losof -i tcp:8080' in terminal to get PID
+// then 'kill -15 [PID]' or 'kill -9 [PID]'
+process.once('SIGINT', function () {
+  // ctrl C
+  console.log("SIGINT");
+  //let client know that it should not reload when it loses connection
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.on('close', function () {});
+      client.send("kill");
+    }
+  });
+
+  server.close(function () {
+    process.exit(0);
+  });
 });

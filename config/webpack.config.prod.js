@@ -1,6 +1,15 @@
 // const autoprefixer = require('autoprefixer');
 const paths = require('./paths');
+const fs = require('fs');
 
+const nodeModules = {};
+fs.readdirSync('node_modules')
+    .filter(function(x) {
+        return ['.bin'].indexOf(x) === -1;
+    })
+    .forEach(function(mod) {
+        nodeModules[mod] = 'commonjs ' + mod;
+    });
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
@@ -51,6 +60,10 @@ module.exports = [
       filename: 'server/index.js',
       // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: paths.servedPath
-    }
-  }, require('./webpack.config.baseprod.js')(paths.serverSrc, ''))
+    },
+  },
+  require('./webpack.config.baseprod.js')(paths.serverSrc, ''),
+  {
+    externals: nodeModules
+  })
 ];

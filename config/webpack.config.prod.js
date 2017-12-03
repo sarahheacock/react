@@ -1,17 +1,19 @@
 // const autoprefixer = require('autoprefixer');
 const paths = require('./paths');
-const fs = require('fs');
+const eslintFormatter = require('react-dev-utils/eslintFormatter');
+// const fs = require('fs');
 
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+// const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
+//
+// const nodeModules = {};
+// fs.readdirSync('node_modules')
+//     .filter(function(x) {
+//         return ['.bin'].indexOf(x) === -1;
+//     })
+//     .forEach(function(mod) {
+//         nodeModules[mod] = 'commonjs ' + mod;
+//     });
 
-const nodeModules = {};
-fs.readdirSync('node_modules')
-    .filter(function(x) {
-        return ['.bin'].indexOf(x) === -1;
-    })
-    .forEach(function(mod) {
-        nodeModules[mod] = 'commonjs ' + mod;
-    });
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
@@ -64,30 +66,31 @@ module.exports = [
       ]
     },
     module: {
-      strictExportPresence: true,
+      //strictExportPresence: true,
       rules: [
         {
           test: /\.(js|jsx|mjs)$/,
-          enforce: 'pre',
+          //enforce: 'pre',
           include: paths.serverSrc,
           use: [
+            {
+              loader: require.resolve('babel-loader'),
+              options: {}
+            },
             {
               loader: require.resolve("webpack-strip-block"),
               options: {
                 start: "PROD-START",
                 end: "PROD-END"
               }
-            }
-          ]
-        },
-        {
-          test: /\.(js|jsx|mjs)$/,
-          enforce: 'pre',
-          include: paths.serverSrc,
-          use: [
+            },
             {
-              loader: require.resolve('babel-loader'),
-              options: {}
+              options: {
+                formatter: eslintFormatter,
+                eslintPath: require.resolve('eslint'),
+
+              },
+              loader: require.resolve('eslint-loader'),
             }
           ]
         }

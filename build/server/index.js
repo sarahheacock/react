@@ -9582,8 +9582,7 @@ var server = http.createServer(app);
 //=======START SERVER========================================
 var port = process.env.PORT || 8080;
 
-server.listen(port, function () {
-});
+server.listen(port, function () {});
 
 /***/ }),
 /* 81 */

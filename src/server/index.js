@@ -6,9 +6,6 @@ import { StaticRouter } from 'react-router-dom';
 
 import App from "../../build/shared";
 
-/*PROD-START*/
-const WebSocket = require('ws');
-/*PROD-END*/
 
 const app = express();
 app.use(express.static("build/client"));
@@ -104,6 +101,8 @@ const server = http.createServer(app);
 
 //================WEB SOCKET================================================
 /*PROD-START*/
+const WebSocket = require('ws');
+
 let wss;
 
 function init(){

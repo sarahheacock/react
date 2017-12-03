@@ -71,7 +71,7 @@ module.exports = function(input, css){
           include: input,
           use: [
             {
-              loader: "webpack-strip-block",
+              loader: require.resolve("webpack-strip-block"),
               options: {
                 start: "PROD-START",
                 end: "PROD-END"

@@ -1,6 +1,7 @@
 // const autoprefixer = require('autoprefixer');
 const paths = require('./paths');
 const eslintFormatter = require('react-dev-utils/eslintFormatter');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 // const fs = require('fs');
 
 // const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
@@ -95,6 +96,9 @@ module.exports = [
           ]
         }
       ]
-    }
+    },
+    plugins: [
+       new UglifyJsPlugin()
+    ]
   }
 ];

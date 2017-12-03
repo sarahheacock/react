@@ -24,8 +24,8 @@ const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const clearConsole = require('react-dev-utils/clearConsole');
 // const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const {
-  choosePort,
-  prepareProxy,
+  // choosePort,
+  // prepareProxy,
   prepareUrls,
 } = require('react-dev-utils/WebpackDevServerUtils');
 

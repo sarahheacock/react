@@ -63,11 +63,20 @@ module.exports = function(input, css){
       strictExportPresence: true,
       rules: [
         // First, run the linter.
+        // Second, remove sections
         // It's important to do this before Babel processes the JS.
         {
           test: /\.(js|jsx|mjs)$/,
           enforce: 'pre',
+          include: input,
           use: [
+            {
+              loader: "webpack-strip-block",
+              options: {
+                start: "PROD-START",
+                end: "PROD-END"
+              }
+            },
             {
               options: {
                 formatter: eslintFormatter,
@@ -76,8 +85,7 @@ module.exports = function(input, css){
               },
               loader: require.resolve('eslint-loader'),
             }
-          ],
-          include: input,
+          ]
         },
         {
           // "oneOf" will traverse all following loaders until one will

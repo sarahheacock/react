@@ -101,8 +101,8 @@ const http = require('http');
 const server = http.createServer(app);
 
 //================WEB SOCKET================================================
+/*PROD-START*/
 let wss;
-
 
 function init(){
   if(DEV){
@@ -142,7 +142,7 @@ function init(){
       //   console.log('Web socket disconnected. ' + reason + " " + description);
       // });
 
-      ws.send('HELLO');
+      ws.send('reload');
     });
   }
 }
@@ -153,11 +153,11 @@ function send(){
   if(DEV){
     const pid = process.pid;
 
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send("reload");
-      }
-    });
+    // wss.clients.forEach(function each(client) {
+    //   if (client.readyState === WebSocket.OPEN) {
+    //     client.send("reload");
+    //   }
+    // });
 
     process.send({
       message: "Server process connected...\npid: " + pid + "\nExpress server is listening on port: " + port,
@@ -165,12 +165,13 @@ function send(){
     });
   }
 }
+/*PROD-END*/
 
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
 server.listen(port, () => {
-  //console.log();
+  /*PROD-START*/
   if(DEV){
     send();
     // if localhost is in use during dev
@@ -193,4 +194,6 @@ server.listen(port, () => {
   else {
     console.log("Express server is listening on port: " + port);
   }
+  /*PROD-END*/
+
 });

@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import './index.css';
-
 import App from "../../build/shared";
-//import "../../build/shared/index.css";
 
+/*PROD-START*/
 import socket from './socket.js';
 
 function add(){
@@ -16,7 +15,7 @@ function add(){
 }
 
 add();
-
+/*PROD-END*/
 
 ReactDOM.hydrate(
   <Router>

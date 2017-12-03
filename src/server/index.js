@@ -17,7 +17,7 @@ const DEV = process.env.NODE_ENV === 'development';
 //html that is returned during route changes
 const renderFullPage = (html, preloadedState) => {
   const src = "./index.js";
-  const href = '<link href="/index.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
+  const href = '<link href="/client.css" rel="stylesheet"><link href="/shared.css" rel="stylesheet">';
 
   return `
     <!DOCTYPE html>
@@ -48,6 +48,9 @@ const context = {};
 
 //retrieve static route using react
 const display = (req, res, next) => {
+  console.log("Server received request: ", req.url);
+  console.log("");
+
   const body = renderToString(
     <StaticRouter context={context} location={req.url}>
       <App data={req.data} />
@@ -66,6 +69,7 @@ app.get("/about", (req, res, next) => {
   next();
 }, display);
 
+// front end redirects routes to Home
 app.get("*", (req, res, next) => {
   req.data = {
     "name": "HOME"
@@ -81,6 +85,7 @@ app.use((req, res, next) => {
   err.status = 404;
   next(err);
 });
+
 
 //Error Handler
 app.use((err, req, res, next) => {
@@ -98,24 +103,44 @@ const server = http.createServer(app);
 //================WEB SOCKET================================================
 let wss;
 
+
 function init(){
   if(DEV){
     wss = new WebSocket.Server({ server });
+
+    function count(){
+      // both should equal 1 as long as no other tabs or browsers are open
+      let open = 0;
+      let total = 0;
+
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          open++;
+        }
+        total++;
+      });
+
+      return {
+        open: open,
+        total: total
+      };
+    }
+
     wss.on('connection', function connection(ws, req) {
       // const url = require('url');
       // const location = url.parse(req.url, true);
-      // You might use location.query.access_token to authenticate or share sessions
-      // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
 
       ws.on('message', function incoming(message) {
-        console.log('received: ', message);
-        process.send({message: message});
+        //console.dir(ws);
+        const pid = ws._ultron.id; // increments every time the page is refreshed
+        const num = count();
+        process.send({message: message + "\nid: " + pid + "\nopen #: " + num.open + "\ntotal #: " + num.total});
       });
 
-      ws.on('close', function(reason, description){
-        //usually caused by reloading the browser
-        console.log((new Date()) + ' Peer disconnected. ' + reason + " " + description);
-      });
+      // ws.on('close', function(reason, description){
+      //   // usually caused by reloading the browser or closing browser
+      //   console.log('Web socket disconnected. ' + reason + " " + description);
+      // });
 
       ws.send('HELLO');
     });
@@ -126,11 +151,16 @@ init();
 
 function send(){
   if(DEV){
-    console.log('pid is ' + process.pid);
     const pid = process.pid;
 
+    wss.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send("reload");
+      }
+    });
+
     process.send({
-      message: "Express server is listening on port: " + port + "\n pid: " + pid,
+      message: "Server process connected...\npid: " + pid + "\nExpress server is listening on port: " + port,
       done: true
     });
   }
@@ -139,7 +169,6 @@ function send(){
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
-
 server.listen(port, () => {
   //console.log();
   if(DEV){
@@ -147,19 +176,21 @@ server.listen(port, () => {
     // if localhost is in use during dev
     // 'losof -i tcp:8080' in terminal to get PID
     // then 'kill -15 [PID]' or 'kill -9 [PID]'
-    process.once('SIGINT', function() {  // ctrl C
-      console.log("SIGINT");
+    process.once('SIGINT', function() {  // signal sent by ctrl C
       //let client know that it should not reload when it loses connection
       wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
-          client.on('close', function(){});
           client.send("kill");
         }
       });
 
+      console.log("SIGINT");
       server.close(function(){
         process.exit(0);
-      })
+      });
     });
+  }
+  else {
+    console.log("Express server is listening on port: " + port);
   }
 });

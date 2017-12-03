@@ -16,7 +16,7 @@ require('../config/env');
 
 const fs = require('fs-extra');
 const chalk = require('chalk');
-const { fork } = require('child_process');
+const { fork, spawn } = require('child_process');
 const webpack = require('webpack');
 const paths = require('../config/paths');
 // const WebpackDevServer = require('webpack-dev-server');
@@ -37,10 +37,8 @@ const openBrowser = require('react-dev-utils/openBrowser');
 
 // const sharedConfig = require('../config/webpack.config.shared-dev');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
-// const parallel = require('parallel-webpack');
-
 const measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
-// const isInteractive = process.stdout.isTTY;
+
 
 
 measureFileSizesBeforeBuild(paths.appBuild)
@@ -117,66 +115,100 @@ function build(previousFileSizes, config) {
 
 
 function run(){
-  // The child_process.spawn() method spawns a new process using the given command,
-  // with command line arguments in args. If omitted, args defaults to an empty array.
-  let ready = false;
-  //let running = false;
+  // The child_process.fork() method is a special case of child_process.spawn() used specifically
+  // to spawn new Node.js processes. Like child_process.spawn(), a ChildProcess object is returned.
+  // The returned ChildProcess will have an additional communication channel built-in that allows
+  // messages to be passed back and forth between the parent and child i.e. process.send({...});
+  let server = {
+    connected: false
+  };
   const listen = fork('scripts/listen.js');
 
   listen.on('message', (m) => {
-    console.log('Change in files: ', m);
-    // console.log(server || server.killed);
-    // console.log(server || server.connected);
-
-    if(ready && server && server.connected){
-      //have to restart server and reload window
-      //if you just reload window when changing client
-      //client and server text will not match
-      server.kill();
+    // if you just reload window when changing client, client and server text will not match
+    // therefore, you have to disconnect the server process causing window to reload
+    function next(){
+      if(server.connected){
+        server.kill();
+      }
+      else {
+        console.log(chalk.yellow("Server process not running"));
+        console.log(chalk.green("Starting server process..."));
+        console.log("");
+        run();
+      }
     }
 
-    if(!server || !server.connected) {
-      run();
+
+    if(m.message){
+      console.log(chalk.yellow(m.message));
+      console.log("");
+      next();
+    }
+    else if(m.request){
+      let arr = m.request.split(' ');
+      arr.splice(0, arr.indexOf("npm") + 1);
+
+      console.log(chalk.yellow("npm", arr));
+      console.log("");
+      const npm = spawn('npm', arr);
+
+      npm.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+      });
+
+      npm.stderr.on('data', (data) => {
+        console.log(chalk.red(`stderr: ${data}`));
+      });
+
+      npm.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+        console.log("");
+        next();
+      });
     }
   });
 
-  let server;
+  listen.on('exit', (reason, description) => {
+    console.log(chalk.red("Listener process stopped due to " +  description + " " + reason));
+    console.log("");
+  });
+
+  listen.on('error', function(err){
+    console.log(chalk.red("LISTENER PROCESS ERROR...", err));
+    console.log("");
+  })
 
   function run(){
-    server = fork('build/server/index.js');
-    //running = true;
+    server = fork('build/server/index.js', [], {});
 
     server.on('message', (m) => {
-      console.log('PARENT got message:', m.message);
+      console.log(chalk.green(m.message));
+      console.log("");
+
       if(m.done){
-        ready = true;
         openBrowser(urls.localUrlForBrowser);
       }
     });
 
     server.on('error', function(err){
-      console.log("ERROR", err);
+      console.log(chalk.red("SERVER PROCESS ERROR...", err));
+      console.log("");
     })
 
-    server.on('exit', function(code, signal){
-      console.log('EXIT ' + code + " " + signal);
-      //running = false;
-    });
-
-    server.on('close', function(reason, description){
-      //usually caused by reloading the browser
-      console.log("Server stopped due to " +  description + " " + reason);
-      ready = false;
-      //running = false;
-
+    server.on('exit', function(reason, description){
+      // SIGTERM is the default signal of server.kill() which occurs on file changes
       if(description === 'SIGTERM'){
-        console.log("Restarting Server");
+        console.log(chalk.green("Server process stopped due to " +  description + " " + reason));
+        console.log(chalk.green("Restarting Server Process..."));
+        console.log("");
         run();
       }
-      else if(reason !== 1){
-        console.log("Listener Stopped");
-        listen.kill();
-        process.exit(0);
+      else {
+        // usually the other cause is 'null, 1' which is due to webpack compile error
+        console.log("");
+        console.log(chalk.red("Server process stopped due to " +  description + " " + reason));
+        console.log("");
       }
     });
   }

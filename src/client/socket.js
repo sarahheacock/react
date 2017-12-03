@@ -11,11 +11,11 @@ export default function () {
   // open connection
   // Create WebSocket connection.
   let socket = new WebSocket(window.location.href.replace('http', 'ws'));
-  socket.reload = true;
+  socket.reload = false;
 
   // Connection opened
   socket.addEventListener('open', function (event) {
-      socket.send('Hello Server!');
+      socket.send('Web socket connected...');
   });
 
   // Listen for messages
@@ -23,31 +23,38 @@ export default function () {
       console.log('Message from server: ', event.data);
       //send message from server in order to prevent window from reloading
       if(event.data === "kill"){
-        //socket.reload = false;
-        //socket.send(event.data);
-
         socket.close();
         socket.reload = false;
       }
+      if(event.data === "reload"){
+        socket.reload = true;
+      }
   });
 
-  /**
-   * This method is optional. If the server wasn't able to
-   * respond to the in 3 seconds then show some error message
-   * to notify the user that something is wrong.
-   */
-  setInterval(function() {
-    if (socket.readyState !== 1) {
-      console.log(socket.readyState, 'Unable to communicate with the WebSocket server.', socket.reload);
-      if(socket.readyState === 3){
-        if(socket.reload){
-          window.location.reload(socket.reload);
-        }
-        else {
-          console.log("socket closed");
+  // This checks for connection and reloads the page if it does not find Connection
+  // If server sends message "kill" (user enter ctrl C), the page does not reload
+  // This signifies the server process is disconnected and avoids an infinite loop
+  let count = 0;
+
+  function check(){
+    setTimeout(function() {
+      if (socket.readyState !== 1) {
+        console.log(socket.readyState, 'Unable to communicate with the WebSocket server.');
+        if(socket.readyState === 3){
+          if(socket.reload){
+            window.location.reload(socket.reload);
+          }
+          else {
+            count++;
+          }
         }
       }
-    }
-  }, 2000);
 
+      if(count < 3){
+        check();
+      }
+    }, 3000);
+  }
+
+  check();
 };

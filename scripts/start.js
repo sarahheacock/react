@@ -120,15 +120,23 @@ function run(){
   // The child_process.spawn() method spawns a new process using the given command,
   // with command line arguments in args. If omitted, args defaults to an empty array.
   let ready = false;
+  //let running = false;
   const listen = fork('scripts/listen.js');
 
   listen.on('message', (m) => {
     console.log('Change in files: ', m);
-    if(ready){
+    // console.log(server || server.killed);
+    // console.log(server || server.connected);
+
+    if(ready && server && server.connected){
       //have to restart server and reload window
       //if you just reload window when changing client
       //client and server text will not match
       server.kill();
+    }
+
+    if(!server || !server.connected) {
+      run();
     }
   });
 
@@ -136,6 +144,7 @@ function run(){
 
   function run(){
     server = fork('build/server/index.js');
+    //running = true;
 
     server.on('message', (m) => {
       console.log('PARENT got message:', m.message);
@@ -143,24 +152,32 @@ function run(){
         ready = true;
         openBrowser(urls.localUrlForBrowser);
       }
-      else if(m.closed){
-        console.log("closed");
-      }
+    });
+
+    server.on('error', function(err){
+      console.log("ERROR", err);
+    })
+
+    server.on('exit', function(code, signal){
+      console.log('EXIT ' + code + " " + signal);
+      //running = false;
     });
 
     server.on('close', function(reason, description){
       //usually caused by reloading the browser
-      console.log(reason, description);
+      console.log("Server stopped due to " +  description + " " + reason);
+      ready = false;
+      //running = false;
 
       if(description === 'SIGTERM'){
+        console.log("Restarting Server");
         run();
       }
-      else {
+      else if(reason !== 1){
+        console.log("Listener Stopped");
         listen.kill();
         process.exit(0);
       }
     });
   }
-
-  run();
 }

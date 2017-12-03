@@ -109,18 +109,7 @@ function init(){
 
       ws.on('message', function incoming(message) {
         console.log('received: ', message);
-        let obj = {};
-        obj[message] = true;
-        process.send(obj);
-
-        if(obj.kill || obj.reload){
-          process.send(obj);
-
-          server.close(function () {
-            //ws.close();
-            process.exit(0);
-          });
-        }
+        process.send({message: message});
       });
 
       ws.on('close', function(reason, description){
@@ -150,11 +139,11 @@ function send(){
 //=======START SERVER========================================
 const port = process.env.PORT || 8080;
 
+
 server.listen(port, () => {
   //console.log();
   if(DEV){
     send();
-
     // if localhost is in use during dev
     // 'losof -i tcp:8080' in terminal to get PID
     // then 'kill -15 [PID]' or 'kill -9 [PID]'

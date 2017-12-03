@@ -1,7 +1,8 @@
 import React from 'react';
 //import PropTypes from 'prop-types';
-// import Nest from './Nest';
+//import Nest from './Nest';
 import './Home.css';
+
 
 const Home = (props) => {
   return (

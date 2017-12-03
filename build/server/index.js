@@ -18,12 +18,15 @@ var _shared2 = _interopRequireDefault(_shared);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/*PROD-START*/
 var WebSocket = require('ws');
-var app = (0, _express2.default)();
+/*PROD-END*/
 
+var app = (0, _express2.default)();
 app.use(_express2.default.static("build/client"));
 
 var DEV = process.env.NODE_ENV === 'development';
+
 //===============MIDDLEWARE=================================
 //html that is returned during route changes
 var renderFullPage = function renderFullPage(html, preloadedState) {

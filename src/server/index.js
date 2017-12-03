@@ -6,13 +6,15 @@ import { StaticRouter } from 'react-router-dom';
 
 import App from "../../build/shared";
 
+/*PROD-START*/
 const WebSocket = require('ws');
+/*PROD-END*/
+
 const app = express();
-
-
 app.use(express.static("build/client"));
 
 const DEV = process.env.NODE_ENV === 'development';
+
 //===============MIDDLEWARE=================================
 //html that is returned during route changes
 const renderFullPage = (html, preloadedState) => {
@@ -195,5 +197,4 @@ server.listen(port, () => {
     console.log("Express server is listening on port: " + port);
   }
   /*PROD-END*/
-
 });

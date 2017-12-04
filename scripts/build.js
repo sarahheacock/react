@@ -109,7 +109,7 @@ function build(previousFileSizes) {
       if (error) {
         return reject(error);
       }
-      
+
       let compiler = webpack(config);
       compiler.run((err, stats) => {
         if (err) {
@@ -150,5 +150,7 @@ function build(previousFileSizes) {
 
 
 function clean(){
-  fs.emptyDirSync(paths.appBuild);
+  fs.emptyDirSync(paths.serverBuild);
+  fs.emptyDirSync(paths.clientBuild);
+  fs.emptyDirSync(paths.sharedBuild);
 }

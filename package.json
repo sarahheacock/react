@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/sarahheacock/react"
   },
-  "homepage": "https://rocky-taiga-68455.herokuapp.com/",
+  "homepage": "https://nameless-basin-18426.herokuapp.com/",
   "dependencies": {
     "autoprefixer": "^7.1.6",
     "axios": "^0.17.1",

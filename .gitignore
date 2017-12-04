@@ -7,6 +7,10 @@
 /coverage
 
 #/build
+/scripts
+/src
+/test
+/config
 
 # misc
 .DS_Store

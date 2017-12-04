@@ -85,14 +85,14 @@ module.exports = [
                 end: "PROD-END"
               }
             },
-            {
-              options: {
-                formatter: eslintFormatter,
-                eslintPath: require.resolve('eslint'),
-
-              },
-              loader: require.resolve('eslint-loader'),
-            }
+            // {
+            //   options: {
+            //     formatter: eslintFormatter,
+            //     eslintPath: require.resolve('eslint'),
+            //
+            //   },
+            //   loader: require.resolve('eslint-loader'),
+            // }
           ]
         }
       ]

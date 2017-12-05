@@ -8,19 +8,15 @@
   },
   "homepage": "https://damp-dusk-27680.herokuapp.com/",
   "dependencies": {
-    "autoprefixer": "^7.1.6",
     "axios": "^0.17.1",
     "babel-runtime": "^6.26.0",
-    "dotenv": "^4.0.0",
     "express": "^4.16.2",
-    "object-assign": "^4.1.1",
-    "promise": "^8.0.1",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
-    "react-router-dom": "^4.2.2",
-    "ws": "^3.3.2"
+    "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
+    "autoprefixer": "^7.2.1",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
@@ -35,6 +31,7 @@
     "chalk": "^2.3.0",
     "chokidar": "^1.7.0",
     "css-loader": "^0.28.7",
+    "dotenv": "^4.0.0",
     "eslint": "4.10.0",
     "eslint-config-react-app": "^2.0.1",
     "eslint-loader": "^1.9.0",
@@ -48,13 +45,16 @@
     "html-webpack-plugin": "^2.30.1",
     "isomorphic-style-loader": "^4.0.0",
     "jest": "^21.2.1",
+    "object-assign": "^4.1.1",
     "postcss-loader": "^2.0.8",
+    "promise": "^8.0.1",
     "react-dev-utils": "^4.2.1",
     "style-loader": "^0.19.0",
     "url-loader": "^0.6.2",
     "webpack": "^3.8.1",
     "webpack-manifest-plugin": "^1.3.2",
-    "webpack-strip-block": "^0.2.0"
+    "webpack-strip-block": "^0.2.0",
+    "ws": "^3.3.2"
   },
   "license": "ISC",
   "author": "sarahheacock",
